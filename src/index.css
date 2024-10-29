@@ -1,0 +1,12 @@
+html {
+    scroll-behavior: smooth;
+    overflow: auto;
+}
+
+.scrollbar-hidden {
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}

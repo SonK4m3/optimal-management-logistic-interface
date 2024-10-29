@@ -1,0 +1,33 @@
+{
+  "app": {
+    "apiUrl": "",
+    "wws": ""
+  },
+  "rpc": {
+    "bscTestnet": {
+      "url": "https://data-seed-prebsc-1-s1.binance.org:8545",
+      "nativeDecimals": 18
+    },
+    "bscMainnet": {
+      "url": "https://bsc-dataseed1.binance.org",
+      "nativeDecimals": 18
+    },
+    "ethMainnet": {
+      "url": "https://eth.llamarpc.com",
+      "nativeDecimals": 18
+    },
+    "ethTestnet": {
+      "url": "https://ethereum-sepolia-rpc.publicnode.com",
+      "nativeDecimals": 18
+    },
+    "bitcoinMainnet": {
+      "url": "https://bitcoin-rpc.publicnode.com",
+      "nativeDecimals": 9
+    },
+    "bitcoinTestnet": {
+      "url": "https://bitcoin-testnet-rpc.publicnode.com",
+      "nativeDecimals": 9
+    }
+  },
+  "redirectToLoginPage": true
+}

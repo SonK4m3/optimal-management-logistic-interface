@@ -1,0 +1,257 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* *=========== Default theme =========== */
+@layer base {
+    :root {
+        --background: 0 0% 100%;
+        --foreground: 222.2 84% 4.9%;
+
+        --card: 0 0% 100%;
+        --card-foreground: 222.2 84% 4.9%;
+
+        --popover: 0 0% 100%;
+        --popover-foreground: 222.2 84% 4.9%;
+
+        --primary: 222.2 47.4% 11.2%;
+        --primary-foreground: 210 40% 98%;
+
+        --secondary: 210 40% 96.1%;
+        --secondary-foreground: 222.2 47.4% 11.2%;
+
+        --muted: 210 40% 96.1%;
+        --muted-foreground: 215.4 16.3% 46.9%;
+
+        --accent: 210 40% 96.1%;
+        --accent-foreground: 222.2 47.4% 11.2%;
+
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 210 40% 98%;
+
+        --border: 214.3 31.8% 91.4%;
+        --input: 214.3 31.8% 91.4%;
+        --ring: 222.2 84% 4.9%;
+
+        --radius: 0.5rem;
+    }
+
+    .dark {
+        --background: 206 30% 11%;
+        --foreground: 210 40% 98%;
+
+        --card: 222.2 84% 4.9%;
+        --card-foreground: 210 40% 98%;
+
+        --popover: 222.2 84% 4.9%;
+        --popover-foreground: 210 40% 98%;
+
+        --primary: 210 40% 98%;
+        --primary-foreground: 222.2 47.4% 11.2%;
+
+        --secondary: 210 26% 18%;
+        --secondary-foreground: 210 40% 98%;
+
+        --muted: 217.2 32.6% 17.5%;
+        --muted-foreground: 215 20.2% 65.1%;
+
+        --accent: 208 26% 13%;
+        --accent-foreground: 210 40% 98%;
+
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 210 40% 98%;
+
+        --border: 217.2 32.6% 17.5%;
+        --input: 217.2 32.6% 17.5%;
+        --ring: 212.7 26.8% 83.9%;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
+
+    :root {
+        --chart-1: 221.2 83.2% 53.3%;
+        --chart-2: 212 95% 68%;
+        --chart-3: 216 92% 60%;
+        --chart-4: 210 98% 78%;
+        --chart-5: 212 97% 87%;
+
+        --2xl-medium-24-font-family: 'PolySans', Helvetica;
+        --2xl-medium-24-font-size: 24px;
+        --2xl-medium-24-font-style: normal;
+        --2xl-medium-24-font-weight: 400;
+        --2xl-medium-24-letter-spacing: 0px;
+        --2xl-medium-24-line-height: 32px;
+        --3xl-medium-32-font-family: 'PolySans', Helvetica;
+        --3xl-medium-32-font-size: 32px;
+        --3xl-medium-32-font-style: normal;
+        --3xl-medium-32-font-weight: 400;
+        --3xl-medium-32-letter-spacing: 0px;
+        --3xl-medium-32-line-height: 40px;
+        --3xl-regular-font-family: 'PolySans', Helvetica;
+        --3xl-regular-font-size: 32px;
+        --3xl-regular-font-style: normal;
+        --3xl-regular-font-weight: 400;
+        --3xl-regular-letter-spacing: 0px;
+        --3xl-regular-line-height: 40px;
+        --3xl-slim-32-font-family: 'PolySans', Helvetica;
+        --3xl-slim-32-font-size: 32px;
+        --3xl-slim-32-font-style: normal;
+        --3xl-slim-32-font-weight: 400;
+        --3xl-slim-32-letter-spacing: 0px;
+        --3xl-slim-32-line-height: 40px;
+        --color-accent-green-100: rgba(34, 221, 112, 0.1);
+        --color-accent-green-200: rgba(34, 221, 112, 0.2);
+        --color-accent-green-300: rgba(34, 221, 112, 0.3);
+        --color-accent-green-500: rgba(34, 221, 112, 0.5);
+        --color-accent-green-700: rgba(34, 221, 112, 0.7);
+        --color-accent-green-900: rgba(34, 221, 112, 1);
+        --color-accent-red-100: rgba(232, 74, 100, 0.1);
+        --color-accent-red-200: rgba(232, 74, 100, 0.2);
+        --color-accent-red-300: rgba(232, 74, 100, 0.3);
+        --color-accent-red-500: rgba(232, 74, 100, 0.5);
+        --color-accent-red-700: rgba(232, 74, 100, 0.7);
+        --color-accent-red-900: rgba(232, 74, 100, 1);
+        --color-brand-400: rgba(216, 232, 129, 1);
+        --color-brand-500: rgba(223, 254, 15, 1);
+        --color-brand-700: rgba(113, 129, 24, 1);
+        --color-decorate-bronze: rgba(189, 127, 110, 1);
+        --color-decorate-gold: rgba(225, 165, 16, 1);
+        --color-decorate-silver: rgba(150, 170, 180, 1);
+        --color-neutral-100: rgba(255, 255, 255, 0.1);
+        --color-neutral-250: rgba(255, 255, 255, 0.25);
+        --color-neutral-50: rgba(255, 255, 255, 0.05);
+        --color-neutral-500: rgba(255, 255, 255, 0.5);
+        --color-neutral-700: rgba(255, 255, 255, 0.7);
+        --color-neutral-800: rgba(255, 255, 255, 0.8);
+        --color-neutral-900: rgba(255, 255, 255, 1);
+        --color-neutral-alpha-100: rgba(18, 18, 18, 0.1);
+        --color-neutral-alpha-250: rgba(18, 18, 18, 0.25);
+        --color-neutral-alpha-50: rgba(18, 18, 18, 0.05);
+        --color-neutral-alpha-500: rgba(18, 18, 18, 0.5);
+        --color-neutral-alpha-700: rgba(18, 18, 18, 0.7);
+        --color-neutral-alpha-800: rgba(18, 18, 18, 0.8);
+        --color-neutral-alpha-900: rgba(18, 18, 18, 1);
+        --corner-radius-8-duplicate: 8px;
+        --large-medium-16-font-family: 'PolySans', Helvetica;
+        --large-medium-16-font-size: 16px;
+        --large-medium-16-font-style: normal;
+        --large-medium-16-font-weight: 400;
+        --large-medium-16-letter-spacing: 0px;
+        --large-medium-16-line-height: 24px;
+        --large-regular-16-font-family: 'PolySans', Helvetica;
+        --large-regular-16-font-size: 16px;
+        --large-regular-16-font-style: normal;
+        --large-regular-16-font-weight: 400;
+        --large-regular-16-letter-spacing: 0px;
+        --large-regular-16-line-height: 24px;
+        --large-slim-16-font-family: 'PolySans', Helvetica;
+        --large-slim-16-font-size: 16px;
+        --large-slim-16-font-style: normal;
+        --large-slim-16-font-weight: 400;
+        --large-slim-16-letter-spacing: 0px;
+        --large-slim-16-line-height: 24px;
+        --medium-medium-14-font-family: 'PolySans', Helvetica;
+        --medium-medium-14-font-size: 14px;
+        --medium-medium-14-font-style: normal;
+        --medium-medium-14-font-weight: 400;
+        --medium-medium-14-letter-spacing: 0px;
+        --medium-medium-14-line-height: 20px;
+        --medium-regular-14-font-family: 'PolySans', Helvetica;
+        --medium-regular-14-font-size: 14px;
+        --medium-regular-14-font-style: normal;
+        --medium-regular-14-font-weight: 400;
+        --medium-regular-14-letter-spacing: 0px;
+        --medium-regular-14-line-height: 20px;
+        --medium-slim-14-font-family: 'PolySans', Helvetica;
+        --medium-slim-14-font-size: 14px;
+        --medium-slim-14-font-style: normal;
+        --medium-slim-14-font-weight: 400;
+        --medium-slim-14-letter-spacing: 0px;
+        --medium-slim-14-line-height: 20px;
+        --show-icon-show-icon: initial;
+        --small-medium-12-font-family: 'PolySans', Helvetica;
+        --small-medium-12-font-size: 12px;
+        --small-medium-12-font-style: normal;
+        --small-medium-12-font-weight: 400;
+        --small-medium-12-letter-spacing: 0px;
+        --small-medium-12-line-height: 18px;
+        --small-regular-12-font-family: 'PolySans', Helvetica;
+        --small-regular-12-font-size: 12px;
+        --small-regular-12-font-style: normal;
+        --small-regular-12-font-weight: 400;
+        --small-regular-12-letter-spacing: 0px;
+        --small-regular-12-line-height: 18px;
+        --small-slim-12-font-family: 'PolySans', Helvetica;
+        --small-slim-12-font-size: 12px;
+        --small-slim-12-font-style: normal;
+        --small-slim-12-font-weight: 400;
+        --small-slim-12-letter-spacing: 0px;
+        --small-slim-12-line-height: 18px;
+        --spacing-0: 0px;
+        --spacing-10: 10px;
+        --spacing-12: 12px;
+        --spacing-16: 16px;
+        --spacing-2: 2px;
+        --spacing-24: 24px;
+        --spacing-28: 28px;
+        --spacing-32: 32px;
+        --spacing-4: 4px;
+        --spacing-40: 40px;
+        --spacing-56: 56px;
+        --spacing-8: 8px;
+        --xlarge-medium-20-font-family: 'PolySans', Helvetica;
+        --xlarge-medium-20-font-size: 20px;
+        --xlarge-medium-20-font-style: normal;
+        --xlarge-medium-20-font-weight: 400;
+        --xlarge-medium-20-letter-spacing: 0px;
+        --xlarge-medium-20-line-height: 28px;
+        --xsmall-regular-10-font-family: 'PolySans', Helvetica;
+        --xsmall-regular-10-font-size: 10px;
+        --xsmall-regular-10-font-style: normal;
+        --xsmall-regular-10-font-weight: 400;
+        --xsmall-regular-10-letter-spacing: 0px;
+        --xsmall-regular-10-line-height: 12px;
+        --xsmall-slim-10-font-family: 'PolySans', Helvetica;
+        --xsmall-slim-10-font-size: 10px;
+        --xsmall-slim-10-font-style: normal;
+        --xsmall-slim-10-font-weight: 400;
+        --xsmall-slim-10-letter-spacing: 0px;
+        --xsmall-slim-10-line-height: 12px;
+    }
+
+    .dark {
+        --chart-1: 221.2 83.2% 53.3%;
+        --chart-2: 212 95% 68%;
+        --chart-3: 216 92% 60%;
+        --chart-4: 210 98% 78%;
+        --chart-5: 212 97% 87%;
+    }
+}
+
+@layer components {
+    .all-\[unset\] {
+        all: unset;
+    }
+}
+
+@layer utilities {
+    .hidden-input::-webkit-outer-spin-button,
+    .hidden-input::-webkit-inner-spin-button {
+        @apply appearance-none;
+        /* Equivalent to -webkit-appearance: none */
+        margin: 0;
+    }
+
+    .hidden-input[type='number'] {
+        @apply appearance-none;
+        /* For Firefox */
+    }
+}
