@@ -1,13 +1,11 @@
 import React from 'react'
-import { clsx } from 'clsx'
-import Navbar from '@/components/Navbar.tsx'
+import BaseLayout from '@/components/layout/BaseLayout'
 
 const HomePage: React.FC = () => {
     return (
-        <div className={clsx('bg-background', 'w-full h-screen')}>
-            <Navbar title={'Home'} />
-            <div className='flex flex-col gap-4 p-4'></div>
-        </div>
+        <BaseLayout title='Home'>
+            <div>HomePage</div>
+        </BaseLayout>
     )
 }
 

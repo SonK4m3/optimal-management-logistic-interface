@@ -1,18 +1,14 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { lazy } from 'react'
-import AuthorizeRoute from './components/layout/AuthorizeRoute'
+import { createBrowserRouter } from 'react-router-dom'
+import { ROUTES_PATH } from '@/constant/routes'
 
 const AppLayout = lazy(() => import('@/components/layout/AppLayout.tsx'))
 const NotMatch = lazy(() => import('@/views/404/NotMatch.tsx'))
-// Bot
-const ViewBotsPage = lazy(() => import('@/views/bot/ViewBotsPage.tsx'))
-const CreateBotPage = lazy(() => import('@/views/bot/CreateBotPage.tsx'))
-const DetailBotPage = lazy(() => import('@/views/bot/DetailBotPage.tsx'))
-// Wallet
-const GenerateWalletPage = lazy(() => import('@/views/wallet/GenerateWalletPage.tsx'))
-const TechnicalAnalysisPage = lazy(() => import('@/views/technical-analysis/TechnicalAnalysisPage'))
-
 const LoginPage = lazy(() => import('@/views/login/LoginPage.tsx'))
+const HomePage = lazy(() => import('@/views/home/HomePage.tsx'))
+const ListOrderPage = lazy(() => import('@/views/order/ListOrderPage.tsx'))
+const CreateOrderPage = lazy(() => import('@/views/order/CreateOrderPage.tsx'))
+const VRPPage = lazy(() => import('@/views/vrp/VRPPage.tsx'))
 
 export const router = createBrowserRouter([
     {
@@ -21,50 +17,29 @@ export const router = createBrowserRouter([
         children: [
             {
                 path: '',
-                element: <Navigate to={`/bots`} />
-            },
-            {
-                path: 'bots',
-                element: <AuthorizeRoute />,
                 children: [
                     {
-                        path: '',
-                        element: <ViewBotsPage />
+                        path: ROUTES_PATH.HOME,
+                        element: <HomePage />
                     },
                     {
-                        path: 'create',
-                        element: <CreateBotPage />
+                        path: ROUTES_PATH.ORDERS,
+                        element: <ListOrderPage />
                     },
                     {
-                        path: ':botId',
-                        element: <DetailBotPage />
-                    }
-                ]
-            },
-            {
-                path: 'wallet',
-                element: <AuthorizeRoute />,
-                children: [
+                        path: ROUTES_PATH.CREATE_ORDER,
+                        element: <CreateOrderPage />
+                    },
                     {
-                        path: 'generate',
-                        element: <GenerateWalletPage />
-                    }
-                ]
-            },
-            {
-                path: 'technical-analysis',
-                element: <AuthorizeRoute />,
-                children: [
-                    {
-                        path: '',
-                        element: <TechnicalAnalysisPage />
+                        path: ROUTES_PATH.VRP,
+                        element: <VRPPage />
                     }
                 ]
             }
         ]
     },
     {
-        path: 'login',
+        path: ROUTES_PATH.LOGIN,
         element: <LoginPage />
     },
     {

@@ -72,7 +72,10 @@ const CollapseMenuButton: React.FC<{
                                 isOpen ? 'translate-x-0 opacity-100' : '-translate-x-96 opacity-0'
                             )}
                         >
-                            <ChevronDown size={18} className='transition-transform duration-200' />
+                            <ChevronDown
+                                size={18}
+                                className='h-4 w-4 transition-transform ease-in-out duration-700'
+                            />
                         </div>
                     </div>
                 </Button>

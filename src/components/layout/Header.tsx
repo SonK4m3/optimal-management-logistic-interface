@@ -1,27 +1,7 @@
 import React from 'react'
 import { clsx } from 'clsx'
 import { Button } from '@/components/ui/button.tsx'
-import DrawerProvider, { useDrawerContext } from '@/contexts/DrawerContext.tsx'
-import ViewBotsDrawer from '@/views/bot/ViewBotsDrawer.tsx'
 import { useNavigate } from 'react-router-dom'
-
-const ViewBotDrawreButton = () => {
-    const { openDrawer } = useDrawerContext()
-
-    return (
-        <Button
-            variant='emerald'
-            onClick={() => {
-                openDrawer({
-                    background: 'bg-gray-100',
-                    content: <ViewBotsDrawer />
-                })
-            }}
-        >
-            Bots
-        </Button>
-    )
-}
 
 const Header: React.FC = () => {
     const navigate = useNavigate()
@@ -42,11 +22,7 @@ const Header: React.FC = () => {
                         Start new Bot
                     </Button>
                 </div>
-                <div>
-                    <DrawerProvider>
-                        <ViewBotDrawreButton />
-                    </DrawerProvider>
-                </div>
+                <div></div>
             </div>
         </div>
     )

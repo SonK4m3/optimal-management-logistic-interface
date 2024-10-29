@@ -1,4 +1,4 @@
-import { LucideIcon, Bot, Wallet, LineChart } from 'lucide-react'
+import { LucideIcon, Bot, Car } from 'lucide-react'
 type Submenu = {
     href: string
     label: string
@@ -21,44 +21,31 @@ type Group = {
 export function getMenuList(pathname: string): Group[] {
     return [
         {
-            groupLabel: 'Trading',
+            groupLabel: 'My Logistic features',
             menus: [
                 {
-                    href: '/bots',
-                    label: 'DCA Bot',
+                    href: '/orders',
+                    label: 'Orders',
                     active: false,
                     icon: Bot,
                     submenus: [
                         {
-                            href: '',
-                            label: 'List of Bots',
-                            active: pathname === '/bots'
+                            href: '/orders',
+                            label: 'List of Orders',
+                            active: pathname === '/orders'
                         },
                         {
-                            href: '/bots/create',
-                            label: 'Create Bot',
-                            active: pathname === '/bots/create'
+                            href: '/orders/create',
+                            label: 'Create Order',
+                            active: pathname === '/orders/create'
                         }
                     ]
                 },
                 {
-                    href: '/wallet',
-                    label: 'Wallet',
-                    active: false,
-                    icon: Wallet,
-                    submenus: [
-                        {
-                            href: '/wallet/generate',
-                            label: 'Generate Wallet',
-                            active: pathname === '/wallet/generate'
-                        }
-                    ]
-                },
-                {
-                    href: '/technical-analysis',
-                    label: 'Technical Analysis',
-                    active: pathname === '/technical-analysis',
-                    icon: LineChart,
+                    href: '/vrp',
+                    label: 'VRP',
+                    active: pathname === '/vrp',
+                    icon: Car,
                     submenus: []
                 }
             ]

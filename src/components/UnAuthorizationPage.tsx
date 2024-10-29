@@ -3,28 +3,20 @@ import { clsx } from 'clsx'
 import Navbar from '@/components/Navbar.tsx'
 import { useModalContext } from '@/contexts/ModalContext'
 import LoginModal from './LoginModal'
-import { useLocation, useNavigate } from 'react-router-dom'
 import { RootState } from '@/store'
 import { useSelector } from 'react-redux'
 import LoginPageSkeleton from '@/components/skeleton/LoginPageSkeleton'
-import configs from '@/configs'
 
 const UnAuthorizationPage: React.FC = () => {
-    const location = useLocation()
-    const navigate = useNavigate()
     const { openModal } = useModalContext()
     const { isLoading } = useSelector((state: RootState) => state.user)
 
     const autoShowLoginModal = useCallback(() => {
-        if (configs.redirectToLoginPage) {
-            navigate('/login')
-        } else {
-            openModal({
-                title: 'Sign up',
-                content: <LoginModal />
-            })
-        }
-    }, [location])
+        openModal({
+            title: 'Sign up',
+            content: <LoginModal />
+        })
+    }, [])
 
     useEffect(() => {
         autoShowLoginModal()

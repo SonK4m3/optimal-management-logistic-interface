@@ -7,23 +7,16 @@ import { RootState } from '@/store'
 import { Button } from '@/components/ui/button'
 import { useModalContext } from '@/contexts/ModalContext'
 import LoginModal from './LoginModal'
-import configs from '@/configs'
-import { useNavigate } from 'react-router-dom'
 
 const Navbar: React.FC<{ title: string; actions?: React.ReactNode }> = ({ title, actions }) => {
     const user = useSelector((state: RootState) => state.user.user)
     const { openModal } = useModalContext()
-    const navigate = useNavigate()
 
     const handleLogin = () => {
-        if (configs.redirectToLoginPage) {
-            navigate('/login')
-        } else {
-            openModal({
-                title: 'Sign up',
-                content: <LoginModal />
-            })
-        }
+        openModal({
+            title: 'Sign up',
+            content: <LoginModal />
+        })
     }
 
     return (

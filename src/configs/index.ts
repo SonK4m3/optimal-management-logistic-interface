@@ -1,40 +1,13 @@
-import { ChainType } from '@/types'
-import { RpcNetwork } from '@/types'
-import dev from './dev.json'
-import prod from './prod.json'
-import staging from './staging.json'
+import dev from '@/configs/dev.json'
+import prod from '@/configs/prod.json'
+import staging from '@/configs/staging.json'
 
 interface App {
     apiUrl: string
-    taApiUrl: string
-    wws: string
-    infuraAPIKey: string
-    networks: {
-        [key in ChainType]: {
-            chainId?: string
-            chainName?: string
-            rpcUrls?: string[]
-            nativeCurrency?: {
-                name: string
-                symbol: string
-                decimals: number
-            }
-            blockExplorerUrls?: string[]
-        }
-    }
 }
 
 export interface Config {
     app: App
-    rpc: {
-        bscTestnet: RpcNetwork
-        bscMainnet: RpcNetwork
-        ethMainnet: RpcNetwork
-        ethTestnet: RpcNetwork
-        bitcoinMainnet: RpcNetwork
-        bitcoinTestnet: RpcNetwork
-    }
-    redirectToLoginPage: boolean
 }
 
 // Environment types

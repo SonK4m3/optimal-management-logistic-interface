@@ -17,4 +17,14 @@ type OAuthResponse = {
     access_token: string
 }
 
-export type { DocsResponse, DocsResponseWithPagination, OAuthResponse }
+type AppResponse<T> = {
+    success: boolean
+    message: string
+    data: T
+}
+
+type VRPResponse = {
+    vrp: string
+}
+
+export type { DocsResponse, DocsResponseWithPagination, OAuthResponse, VRPResponse, AppResponse }

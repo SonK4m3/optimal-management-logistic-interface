@@ -48,15 +48,15 @@ export default class BaseRequest {
         return this.request<T>('get', url, { params })
     }
 
-    async post<T>(url: string, data: RequestData): Promise<T> {
+    async post<T>(url: string, data?: RequestData): Promise<T> {
         return this.request<T>('post', url, { data })
     }
 
-    async put<T>(url: string, data: RequestData): Promise<T> {
+    async put<T>(url: string, data?: RequestData): Promise<T> {
         return this.request<T>('put', url, { data })
     }
 
-    async patch<T>(url: string, data: RequestData): Promise<T> {
+    async patch<T>(url: string, data?: RequestData): Promise<T> {
         return this.request<T>('patch', url, { data })
     }
 

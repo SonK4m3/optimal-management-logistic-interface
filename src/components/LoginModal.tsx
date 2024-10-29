@@ -1,16 +1,12 @@
 import React from 'react'
 import { Button } from '@/components/ui/button'
 import { useModalContext } from '@/contexts/ModalContext'
-import useOauth from '@/hooks/useOauth'
-import { OAuthProvider } from '@/types'
 import { GoogleIcon } from '@/components/icon'
 
 const LoginModal: React.FC = () => {
     const { closeModal } = useModalContext()
-    const { authenticate } = useOauth()
 
-    const handleLogin = (provider: OAuthProvider) => {
-        authenticate(provider).connectMethod()
+    const handleLogin = () => {
         closeModal()
     }
 
@@ -19,7 +15,7 @@ const LoginModal: React.FC = () => {
             <Button
                 variant='default'
                 size='iconGroupLg'
-                onClick={() => handleLogin('GOOGLE')}
+                onClick={() => handleLogin()}
                 className='w-full'
             >
                 <GoogleIcon /> Login with Google

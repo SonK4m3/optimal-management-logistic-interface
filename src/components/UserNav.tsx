@@ -13,19 +13,14 @@ import {
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { Link } from 'react-router-dom'
-import useOauth from '@/hooks/useOauth'
-import { User, OAuthProvider } from '@/types'
+import { User } from '@/types/user'
 
 interface UserNavProps {
     user: User
 }
 
 const UserNav: React.FC<UserNavProps> = ({ user }) => {
-    const { authenticate } = useOauth()
-
-    const handleLogout = (provider: OAuthProvider) => {
-        authenticate(provider).disconnectMethod()
-    }
+    const handleLogout = () => {}
 
     return (
         <DropdownMenu>
@@ -62,10 +57,7 @@ const UserNav: React.FC<UserNavProps> = ({ user }) => {
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                    className='hover:cursor-pointer'
-                    onClick={() => handleLogout('GOOGLE')}
-                >
+                <DropdownMenuItem className='hover:cursor-pointer' onClick={() => handleLogout()}>
                     <LogOut className='w-4 h-4 mr-3 text-muted-foreground' />
                     Sign out
                 </DropdownMenuItem>

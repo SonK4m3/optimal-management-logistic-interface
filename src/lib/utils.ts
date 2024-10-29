@@ -1,8 +1,5 @@
-import configs from '@/configs'
-import { ChainType } from '@/types'
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import BigNumber from 'bignumber.js'
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
@@ -99,25 +96,6 @@ export function timeFrameToMillis(timeFrame: string): number {
         default:
             return 60 * 1000
     }
-}
-
-export const getEtherscanTransactionExplorerUrl = (
-    txHash: string | undefined,
-    network: ChainType
-) => (txHash ? `${configs.app.networks[network]?.blockExplorerUrls?.[0]}/tx/${txHash}` : '#')
-
-export const getEtherscanAddressExplorerUrl = (address: string | undefined, network: ChainType) =>
-    address ? `${configs.app.networks[network]?.blockExplorerUrls?.[0]}/address/${address}` : '#'
-
-export const convertDecToWei = (number: string | number, decimals = 18): string => {
-    return new BigNumber(number || 0)
-        .multipliedBy(new BigNumber(10).exponentiatedBy(decimals))
-        .toString()
-}
-
-export const convertWeiToDec = (weiNumber: string | BigNumber, decimals = 18): string => {
-    const number = new BigNumber(weiNumber || 0).div(new BigNumber(10).exponentiatedBy(decimals))
-    return new BigNumber(number).toString()
 }
 
 export function formatNumberWithCommas(number: number | string): string {

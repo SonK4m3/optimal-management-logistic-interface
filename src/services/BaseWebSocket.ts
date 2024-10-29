@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { io, Socket } from 'socket.io-client'
 import { EventsMap } from '@socket.io/component-emitter'
 
@@ -16,7 +17,7 @@ export class BaseWebSocket<
     protected socket: Socket<ServerEvents, ClientEvents> | null = null
     private readonly endpoint: string
     private readonly token: string
-    private readonly eventListeners: Map<string, Set<Function>> = new Map()
+    private readonly eventListeners: Map<string, Set<(...args: any[]) => void>> = new Map()
 
     constructor(endpoint: string, token: string) {
         this.endpoint = endpoint

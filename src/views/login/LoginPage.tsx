@@ -2,8 +2,6 @@ import React, { useState } from 'react'
 import SotatekLogo from '@/assets/sotatek.png'
 import { Button } from '@/components/ui/button'
 import { GoogleIcon } from '@/components/icon'
-import useOauth from '@/hooks/useOauth'
-import { OAuthProvider } from '@/types'
 import { Checkbox } from '@/components/ui/checkbox'
 import LoginPageSkeleton from '@/components/skeleton/LoginPageSkeleton'
 import { useSelector } from 'react-redux'
@@ -26,13 +24,10 @@ const CheckboxWithText = ({ handleCheckedTerm }: { handleCheckedTerm: () => void
 }
 
 const LoginPage: React.FC = () => {
-    const { authenticate } = useOauth()
     const { isLoading } = useSelector((state: RootState) => state.user)
     const [checkedTerm, setCheckedTerm] = useState(false)
 
-    const handleLogin = (provider: OAuthProvider) => {
-        authenticate(provider).connectMethod()
-    }
+    const handleLogin = () => {}
 
     const handleCheckedTerm = () => {
         setCheckedTerm(!checkedTerm)
@@ -60,7 +55,7 @@ const LoginPage: React.FC = () => {
                     <Button
                         variant='outline'
                         size='iconGroupLg'
-                        onClick={() => handleLogin('GOOGLE')}
+                        onClick={() => handleLogin()}
                         className='w-full'
                         disabled={!checkedTerm}
                     >
