@@ -1,14 +1,7 @@
 import React from 'react'
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectTrigger
-} from '@/components/ui/select.tsx'
 
 interface FormSelectProps<T extends string> {
-    selected: T
+    selected: T | undefined
     options: T[]
     onSelect: (option: T) => void
 }
@@ -19,27 +12,22 @@ const FormSelect = <T extends string>({
     selected
 }: FormSelectProps<T>): React.ReactElement => {
     return (
-        <Select
-            onValueChange={value => {
-                onSelect(value as T)
-            }}
+        <select
+            value={selected || ''}
+            onChange={e => onSelect(e.target.value as T)}
+            className='w-auto gap-1 pl-2 pr-1 py-1 rounded-3xl border border-color-neutral-alpha-300 text-xs font-normal leading-3 text-center text-color-neutral-900 bg-background cursor-pointer hover:border-color-neutral-500'
         >
-            <SelectTrigger className='w-auto h-5 gap-1 pl-2 pr-1 py-1 rounded-3xl border '>
-                {/*<SelectValue placeholder={selected} />*/}
-                <div className='self-stretch text-center text-color-neutral-900 text-xs font-normal leading-3'>
-                    {selected}
-                </div>
-            </SelectTrigger>
-            <SelectContent>
-                <SelectGroup>
-                    {options.map((option, index) => (
-                        <SelectItem key={`${option}-${index}`} value={`${option}`}>
-                            {option}
-                        </SelectItem>
-                    ))}
-                </SelectGroup>
-            </SelectContent>
-        </Select>
+            {!selected && (
+                <option value='' disabled>
+                    Select an option
+                </option>
+            )}
+            {options.map((option, index) => (
+                <option key={`${option}-${index}`} value={option}>
+                    {option}
+                </option>
+            ))}
+        </select>
     )
 }
 

@@ -14,13 +14,14 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Link } from 'react-router-dom'
 import { User } from '@/types/user'
+import { useAuthContext } from '@/contexts/AuthContext'
 
 interface UserNavProps {
     user: User
 }
 
 const UserNav: React.FC<UserNavProps> = ({ user }) => {
-    const handleLogout = () => {}
+    const { handleLogout } = useAuthContext()
 
     return (
         <DropdownMenu>
@@ -30,8 +31,10 @@ const UserNav: React.FC<UserNavProps> = ({ user }) => {
                         <DropdownMenuTrigger asChild>
                             <Button variant='outline' className='relative h-8 w-8 rounded-full'>
                                 <Avatar className='h-8 w-8'>
-                                    <AvatarImage src={user.picture} alt={user.name} />
-                                    <AvatarFallback className='bg-transparent'></AvatarFallback>
+                                    <AvatarImage src='' alt={user.username} />
+                                    <AvatarFallback className='bg-blue-900'>
+                                        {user.username.charAt(0)}
+                                    </AvatarFallback>
                                 </Avatar>
                             </Button>
                         </DropdownMenuTrigger>
@@ -43,16 +46,16 @@ const UserNav: React.FC<UserNavProps> = ({ user }) => {
             <DropdownMenuContent className='w-56' align='end' forceMount>
                 <DropdownMenuLabel className='font-normal'>
                     <div className='flex flex-col space-y-1'>
-                        <p className='text-sm font-medium leading-none'>{user.name}</p>
+                        <p className='text-sm font-medium leading-none'>{user.username}</p>
                         <p className='text-xs leading-none text-muted-foreground'>{user.email}</p>
                     </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
                     <DropdownMenuItem className='hover:cursor-pointer' asChild>
-                        <Link to='/bots' className='flex items-center'>
+                        <Link to='/orders' className='flex items-center'>
                             <LayoutGrid className='w-4 h-4 mr-3 text-muted-foreground' />
-                            Bots
+                            Orders
                         </Link>
                     </DropdownMenuItem>
                 </DropdownMenuGroup>

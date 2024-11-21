@@ -1,45 +1,94 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react'
+import React, { createContext, useContext, useEffect, useCallback } from 'react'
 import { useDispatch } from 'react-redux'
-import { loginFailure, loginStart, loginSuccess, logout } from '@/store/userSlice'
 import { jwtDecode } from 'jwt-decode'
 import { setAuthorizationToRequest, setDefaultAuthorizationToRequest } from '@/lib/authenticate.ts'
-import RequestFactory from '@/services/RequestFactory.ts'
 import { store } from '@/store'
+import { logout } from '@/store/userSlice'
+import { loginFailure } from '@/store/userSlice'
+import { loginStart } from '@/store/userSlice'
+import { loginSuccess } from '@/store/userSlice'
+import { User } from '@/types/user'
+import AuthRequest from '@/services/AuthRequest'
 
 interface AuthContextProps {
-    isLogin: boolean
-    handleLogin: () => Promise<void>
-    handleLogout: () => Promise<void>
-    handleLoginWithOauth: (access_token: string) => Promise<void>
+    handleLogin: (
+        data: { username: string; password: string },
+        onSuccess?: () => void
+    ) => Promise<void>
+    handleLogout: (onSuccess?: () => void) => Promise<void>
+    handleRegister: (
+        data: { username: string; password: string; email: string },
+        onSuccess?: () => void,
+        onError?: (error: string) => void
+    ) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined)
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [isLogin, setIsLogin] = useState<boolean>(false)
-    const request = RequestFactory.getRequest('AuthRequest')
+    const authRequest = new AuthRequest()
     const dispatch = useDispatch()
 
-    const handleLogin = async () => {
-        // TODO:Implement other login logic
-    }
-    const handleLoginWithOauth = async (googleAccessToken: string) => {
-        dispatch(loginStart())
-        const response = await request.googleOauth(googleAccessToken)
-        if (response && 'accessToken' in response) {
-            dispatch(loginSuccess({ accessToken: response.accessToken }))
-            setAuthorizationToRequest(response.accessToken)
-            setIsLogin(true)
-        } else {
-            dispatch(loginFailure('Failed to login with OAuth'))
+    const handleLogin = async (
+        data: { username: string; password: string },
+        onSuccess?: () => void
+    ) => {
+        try {
+            dispatch(loginStart())
+            const response = await authRequest.login(data.username, data.password)
+            if (response.success) {
+                const user: User = {
+                    id: response.data.id,
+                    username: response.data.username,
+                    email: response.data.email,
+                    role: response.data.role
+                }
+                dispatch(
+                    loginSuccess({
+                        accessToken: response.data.token,
+                        user: user
+                    })
+                )
+                onSuccess?.()
+            } else {
+                dispatch(loginFailure(response.message))
+            }
+        } catch (error) {
+            dispatch(loginFailure('Login failed'))
         }
     }
 
-    const handleLogout = useCallback(async () => {
-        setDefaultAuthorizationToRequest()
-        dispatch(logout())
-        setIsLogin(false)
-    }, [dispatch])
+    const handleRegister = async (
+        data: { username: string; password: string; email: string },
+        onSuccess?: () => void,
+        onError?: (error: string) => void
+    ) => {
+        try {
+            const response = await authRequest.register({
+                username: data.username,
+                email: data.email,
+                password: data.password,
+                fullName: data.username,
+                role: 'CUSTOMER'
+            })
+            if (response.success) {
+                onSuccess?.()
+            } else {
+                onError?.(response.message)
+            }
+        } catch (error) {
+            onError?.(error as string)
+        }
+    }
+
+    const handleLogout = useCallback(
+        async (onSuccess?: () => void) => {
+            setDefaultAuthorizationToRequest()
+            dispatch(logout())
+            onSuccess?.()
+        },
+        [dispatch]
+    )
 
     const checkTokenExpiration = useCallback((token: string): boolean => {
         try {
@@ -76,7 +125,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 if (checkTokenExpiration(token)) {
                     handleLogout()
                 } else {
-                    setIsLogin(true)
                     setAuthorizationToRequest(token)
                     setupExpirationTimer(token)
                 }
@@ -89,7 +137,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, [checkTokenExpiration, handleLogout, setupExpirationTimer])
 
     return (
-        <AuthContext.Provider value={{ isLogin, handleLogin, handleLogout, handleLoginWithOauth }}>
+        <AuthContext.Provider value={{ handleLogin, handleLogout, handleRegister }}>
             {children}
         </AuthContext.Provider>
     )

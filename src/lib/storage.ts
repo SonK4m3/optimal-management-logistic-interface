@@ -1,10 +1,10 @@
+import { User } from '@/types/user'
+
 const PREFERENCES = 'base-ui'
 
 interface Preferences {
     accessToken?: string
-    // Add more preferences here as needed, e.g.:
-    // theme?: string
-    // language?: string
+    user?: User
 }
 
 const defaultPreferences: Preferences = {}
@@ -39,6 +39,10 @@ class Storage {
         const preferences = this.getStorage()
         preferences[key] = value
         this.setStorage(PREFERENCES, preferences)
+    }
+
+    static clear(): void {
+        localStorage.removeItem(PREFERENCES)
     }
 }
 

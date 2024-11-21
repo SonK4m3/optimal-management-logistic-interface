@@ -1,65 +1,53 @@
-import React, { CSSProperties, useState } from 'react'
-import { Box, Tabs } from '@radix-ui/themes'
-import { cn } from '@/lib/utils.ts'
+import * as React from 'react'
+import * as TabsPrimitive from '@radix-ui/react-tabs'
 
-export interface Tab<T extends string> {
-    title: string
-    value: T
-    content: React.ReactNode
-}
+import { cn } from '@/lib/utils'
 
-interface TabsProps<T extends string> {
-    className?: string
-    style?: CSSProperties
-    defaultValue: T
-    tabs: Tab<T>[]
-    onClick?: (value: T) => void
-}
+const Tabs = TabsPrimitive.Root
 
-const UnderlineTabs = <T extends string>(props: TabsProps<T>) => {
-    const { defaultValue, tabs, onClick: onClickTab, className, style } = props
+const TabsList = React.forwardRef<
+    React.ElementRef<typeof TabsPrimitive.List>,
+    React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
+>(({ className, ...props }, ref) => (
+    <TabsPrimitive.List
+        ref={ref}
+        className={cn(
+            'inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground',
+            className
+        )}
+        {...props}
+    />
+))
+TabsList.displayName = TabsPrimitive.List.displayName
 
-    const [active, setActive] = useState<T>(defaultValue)
+const TabsTrigger = React.forwardRef<
+    React.ElementRef<typeof TabsPrimitive.Trigger>,
+    React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
+>(({ className, ...props }, ref) => (
+    <TabsPrimitive.Trigger
+        ref={ref}
+        className={cn(
+            'inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm',
+            className
+        )}
+        {...props}
+    />
+))
+TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
 
-    return (
-        <Tabs.Root
-            value={active}
-            onValueChange={value => {
-                setActive(value as T)
-                if (onClickTab) onClickTab(value as T)
-            }}
-        >
-            <Tabs.List
-                color='indigo'
-                className={cn(
-                    className,
-                    'max-w-full overflow-y-scroll border-b border-color-neutral-50 justify-start items-center gap-0.5 flex'
-                )}
-            >
-                {tabs.map(({ title, value }) => (
-                    <Tabs.Trigger
-                        key={`tab-trigger-${value}`}
-                        value={`${value}`}
-                        style={style}
-                        className='h-8 px-3 rounded-lg justify-center items-center gap-2 inline-flex data-[state=active]:before:bg-color-brand-400'
-                    >
-                        <div className='pb-px rounded-lg flex-col justify-center items-start inline-flex'>
-                            <div className='self-stretch text-base font-normal leading-normal'>
-                                {title}
-                            </div>
-                        </div>
-                    </Tabs.Trigger>
-                ))}
-            </Tabs.List>
-            <Box pt='3'>
-                {tabs.map(({ value, content }) => (
-                    <Tabs.Content key={`tab-content-${value}`} value={`${value}`}>
-                        {content}
-                    </Tabs.Content>
-                ))}
-            </Box>
-        </Tabs.Root>
-    )
-}
+const TabsContent = React.forwardRef<
+    React.ElementRef<typeof TabsPrimitive.Content>,
+    React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
+>(({ className, ...props }, ref) => (
+    <TabsPrimitive.Content
+        ref={ref}
+        className={cn(
+            'mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+            className
+        )}
+        {...props}
+    />
+))
+TabsContent.displayName = TabsPrimitive.Content.displayName
 
-export { UnderlineTabs }
+export { Tabs, TabsList, TabsTrigger, TabsContent }

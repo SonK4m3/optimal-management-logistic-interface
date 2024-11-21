@@ -67,7 +67,12 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
         <ModalContext.Provider value={{ openModal, closeModal }}>
             {children}
             <Dialog open={modal.open} onOpenChange={open => setModal(prev => ({ ...prev, open }))}>
-                <DialogContent className={clsx('max-h-screen overflow-y-auto', modal.className)}>
+                <DialogContent
+                    className={clsx('max-h-screen overflow-y-auto', modal.className)}
+                    onInteractOutside={e => {
+                        e.preventDefault()
+                    }}
+                >
                     <DialogHeader>
                         <DialogTitle>{modal.title ?? ''}</DialogTitle>
                         <DialogDescription>{modal.description ?? ''}</DialogDescription>

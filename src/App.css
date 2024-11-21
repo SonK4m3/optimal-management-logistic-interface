@@ -234,6 +234,23 @@
         --chart-4: 210 98% 78%;
         --chart-5: 212 97% 87%;
     }
+
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: #444;
+        /* Darker color for dark theme */
+        border-radius: 10px;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #222;
+        /* Darker hover color for dark theme */
+    }
 }
 
 @layer components {

@@ -1,4 +1,4 @@
-import { LucideIcon, Bot, Car } from 'lucide-react'
+import { LucideIcon, Bot, User, Truck, Home } from 'lucide-react'
 type Submenu = {
     href: string
     label: string
@@ -26,7 +26,7 @@ export function getMenuList(pathname: string): Group[] {
                 {
                     href: '/orders',
                     label: 'Orders',
-                    active: false,
+                    active: pathname.includes('/orders'),
                     icon: Bot,
                     submenus: [
                         {
@@ -42,10 +42,99 @@ export function getMenuList(pathname: string): Group[] {
                     ]
                 },
                 {
-                    href: '/vrp',
-                    label: 'VRP',
-                    active: pathname === '/vrp',
-                    icon: Car,
+                    href: '/admin',
+                    label: 'Admin',
+                    active: pathname.includes('/admin'),
+                    icon: User,
+                    submenus: [
+                        {
+                            href: '/admin',
+                            label: 'Dashboard',
+                            active: pathname === '/admin'
+                        },
+                        {
+                            href: '/admin/staffs',
+                            label: 'List of Staffs',
+                            active: pathname === '/admin/staffs'
+                        },
+                        {
+                            href: '/admin/customers',
+                            label: 'List of Customers',
+                            active: pathname === '/admin/customers'
+                        },
+                        {
+                            href: '/admin/tasks',
+                            label: 'List of Tasks',
+                            active: pathname === '/admin/tasks'
+                        },
+                        {
+                            href: '/admin/shifts',
+                            label: 'List of Shifts',
+                            active: pathname === '/admin/shifts'
+                        }
+                    ]
+                },
+                {
+                    href: '/driver',
+                    label: 'Driver',
+                    active: pathname === '/driver',
+                    icon: Truck,
+                    submenus: []
+                },
+                {
+                    href: '/dashboard',
+                    label: 'Dashboard',
+                    active: pathname === '/dashboard',
+                    icon: Home,
+                    submenus: []
+                },
+                {
+                    href: '/vehicle',
+                    label: 'Vehicle',
+                    active: pathname === '/vehicle',
+                    icon: Truck,
+                    submenus: []
+                },
+                {
+                    href: '/warehouse',
+                    label: 'Warehouse',
+                    active: pathname === '/warehouse',
+                    icon: Truck,
+                    submenus: []
+                },
+                {
+                    href: '/booking',
+                    label: 'Booking',
+                    active: pathname === '/booking',
+                    icon: Truck,
+                    submenus: []
+                },
+                {
+                    href: '/customer',
+                    label: 'Customer',
+                    active: pathname === '/customer',
+                    icon: Truck,
+                    submenus: []
+                },
+                {
+                    href: '/fuel',
+                    label: 'Fuel',
+                    active: pathname === '/fuel',
+                    icon: Truck,
+                    submenus: []
+                },
+                {
+                    href: '/tracking',
+                    label: 'Tracking',
+                    active: pathname === '/tracking',
+                    icon: Truck,
+                    submenus: []
+                },
+                {
+                    href: '/income-expenses',
+                    label: 'Income & Expenses',
+                    active: pathname === '/income-expenses',
+                    icon: Truck,
                     submenus: []
                 }
             ]

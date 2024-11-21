@@ -6,8 +6,8 @@ export type OAuthConfig = {
 }
 
 export type User = {
-    id: string
-    name: string
+    id: number
+    username: string
     email: string
-    picture: string
+    role: string
 }

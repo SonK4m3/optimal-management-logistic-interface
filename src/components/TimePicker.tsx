@@ -5,10 +5,12 @@ const TimePicker: React.FC<{
     value: string | undefined
     disabled?: boolean
     onChange: (value: string | undefined) => void
-}> = ({ onChange, value, disabled = false }) => {
+    minTime?: string
+}> = ({ onChange, value, disabled = false, minTime }) => {
     return (
         <input
             type='time'
+            defaultValue={minTime}
             value={value}
             onChange={e => onChange(e.target.value)}
             className={cn(

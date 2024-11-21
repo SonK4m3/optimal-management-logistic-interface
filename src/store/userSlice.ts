@@ -1,15 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-
-export interface IUser {
-    id: string
-    name: string
-    email: string
-    picture: string
-}
+import Storage from '@/lib/storage'
+import { User } from '@/types/user'
 
 interface UserState {
     accessToken: string | null
-    user: IUser | null
+    user: User | null
     isLoading: boolean
     error: string | null
 }
@@ -29,12 +24,14 @@ export const userSlice = createSlice({
             state.isLoading = true
             state.error = null
         },
-        loginSuccess: (state, action: PayloadAction<{ accessToken?: string; user?: IUser }>) => {
+        loginSuccess: (state, action: PayloadAction<{ accessToken?: string; user?: User }>) => {
             state.isLoading = false
             if (action.payload.accessToken) {
                 state.accessToken = action.payload.accessToken
+                Storage.setPreference('accessToken', action.payload.accessToken)
             }
             if (action.payload.user) {
+                Storage.setPreference('user', action.payload.user)
                 state.user = action.payload.user
             }
         },
@@ -43,6 +40,7 @@ export const userSlice = createSlice({
             state.error = action.payload
         },
         logout: state => {
+            Storage.clear()
             state.accessToken = null
             state.user = null
             state.isLoading = false

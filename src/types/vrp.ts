@@ -18,10 +18,12 @@ type Customer = {
 type Vehicle = {
     id: number
     capacity: number
-    depot: Depot
-    customerList: Customer[]
+    depot?: Depot
+    customerList?: Customer[]
     totalDistanceMeters: number
     remainingCapacity: number
 }
 
-export type { Depot, Customer, Vehicle, Location }
+type MarkerType = 'depot' | 'customer' | null
+
+export type { Depot, Customer, Vehicle, Location, MarkerType }

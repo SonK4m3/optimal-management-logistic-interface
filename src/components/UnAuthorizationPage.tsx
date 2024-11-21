@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { clsx } from 'clsx'
 import Navbar from '@/components/Navbar.tsx'
 import { useModalContext } from '@/contexts/ModalContext'
@@ -11,16 +11,17 @@ const UnAuthorizationPage: React.FC = () => {
     const { openModal } = useModalContext()
     const { isLoading } = useSelector((state: RootState) => state.user)
 
-    const autoShowLoginModal = useCallback(() => {
+    const autoShowLoginModal = () => {
         openModal({
             title: 'Sign up',
             content: <LoginModal />
         })
-    }, [])
+    }
 
     useEffect(() => {
         autoShowLoginModal()
-    }, [autoShowLoginModal])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     if (isLoading) {
         return <LoginPageSkeleton />
