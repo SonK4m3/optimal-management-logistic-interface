@@ -1,7 +1,7 @@
 import RequestFactory from '@/services/RequestFactory'
 import { RootState } from '@/store'
 import { Driver } from '@/types/driver'
-import { Delivery, Order } from '@/types/order'
+import { Delivery, OrderWithFee } from '@/types/order'
 import { Warehouse } from '@/types/warehouse'
 import { Vehicle } from '@/types/vehicle'
 import { createContext, useContext, useState, useCallback, useEffect } from 'react'
@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux'
 
 interface AdminContextType {
     drivers: Driver[]
-    orders: Order[]
+    orders: OrderWithFee[]
     warehouses: Warehouse[]
     inTransit: Delivery[]
     fetchDrivers: () => Promise<void>
@@ -32,7 +32,7 @@ const AdminProvider = ({ children }: { children: React.ReactNode }) => {
     const accessToken = useSelector((state: RootState) => state.user.accessToken)
 
     const [drivers, setDrivers] = useState<Driver[]>([])
-    const [orders, setOrders] = useState<Order[]>([])
+    const [orders, setOrders] = useState<OrderWithFee[]>([])
     const [warehouses, setWarehouses] = useState<Warehouse[]>([])
     const [inTransit, setInTransit] = useState<Delivery[]>([])
     const [vehicles, setVehicles] = useState<Vehicle[]>([])
@@ -63,7 +63,7 @@ const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             const response = await requestDriver.getDrivers()
             if (response.success) {
-                setDrivers(response.data)
+                setDrivers(response.data.docs)
             }
         } catch (error) {
             console.error(error)
@@ -76,7 +76,7 @@ const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         setOrders([])
 
         try {
-            const response = await requestOrder.getOdersByUser({ page: 1, limit: 100 })
+            const response = await requestOrder.getOdersByUserWithFee({ page: 1, limit: 100 })
             if (response.success) {
                 setOrders(response.data.docs)
             }
@@ -92,7 +92,7 @@ const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             const response = await requestWarehouse.getWarehouses()
             if (response.success) {
-                setWarehouses(response.data)
+                setWarehouses(response.data.docs)
             }
         } catch (error) {
             console.error(error)

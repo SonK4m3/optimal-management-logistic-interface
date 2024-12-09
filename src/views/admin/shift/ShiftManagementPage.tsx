@@ -53,6 +53,15 @@ const ShiftManagementPage = () => {
             accessorKey: 'endTime'
         },
         {
+            header: 'Staffs',
+            accessorKey: 'shiftAssignments.staffName',
+            action: shift => (
+                <div className='line-clamp-1'>
+                    {shift.shiftAssignments.map(assignment => assignment.staffName).join(', ')}
+                </div>
+            )
+        },
+        {
             header: 'Action',
             accessorKey: 'action',
             action: shift => (

@@ -1,22 +1,35 @@
-import { VEHICLE_TYPE } from '@/constant/enum'
+import { VEHICLE_TYPE, DRIVER_STATUS, DELIVERY_ASSIGNMENT_STATUS } from '@/constant/enum'
+
+export type DriverStatus = (typeof DRIVER_STATUS)[keyof typeof DRIVER_STATUS]
+export type DeliveryAssignmentStatus =
+    (typeof DELIVERY_ASSIGNMENT_STATUS)[keyof typeof DELIVERY_ASSIGNMENT_STATUS]
+export type VehicleType = (typeof VEHICLE_TYPE)[keyof typeof VEHICLE_TYPE]
 
 export type Driver = {
     id: number
-    driverCode: string
     fullName: string
     phone: string
-    status: string
-    vehicleType: string
-    vehiclePlateNumber: string
-    workStartTime: string
-    workEndTime: string
-    remainingWorkingMinutes: number
-    preferredAreas: string
-    completedDeliveries: number
-    averageRating: number
-    currentLatitude: number | null
-    currentLongitude: number | null
-    isActive: boolean
+    licenseNumber: string
+    vehicleType: VehicleType
+    vehiclePlate: string
+    status: DriverStatus
+    currentLatitude?: number
+    currentLongitude?: number
 }
 
-export type VehicleType = (typeof VEHICLE_TYPE)[keyof typeof VEHICLE_TYPE]
+export type WarehouseDriver = {
+    driver: Driver
+    warehouseIds: number[]
+}
+
+export type DeliveryAssignment = {
+    id: number
+    deliveryId: number
+    driverId: number
+    warehouseIds: number[]
+    assignedAt: string
+    status: DeliveryAssignmentStatus
+    rejectionReason: string
+    respondedAt: string
+    expiresAt: string
+}

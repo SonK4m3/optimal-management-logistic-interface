@@ -1,5 +1,6 @@
 import { Depot, Customer, Vehicle } from '@/types/vrp'
-import { ServiceType, PayerType, PriorityType, CargoType } from '@/types/order'
+import { StorageCondition } from './product'
+import { PriorityType } from './order'
 
 type PaginationParams = {
     page?: number
@@ -12,56 +13,48 @@ type VRPRequestPayload = {
     vehicles: Vehicle[]
 }
 
+type OrderProduct = {
+    productId: number
+    quantity: number
+}
+
 type OrderRequestPayload = {
-    senderId: number
-    receiverName: string
-    receiverPhone: string
-    receiverAddress: string
-    receiverLatitude: number
-    receiverLongitude: number
-    orderProducts: {
-        name: string
-        price: number
-        quantity: number
-        weight: number
-    }[]
-    pickupTime: string
-    serviceType: ServiceType
-    cargoType: CargoType
-    payer: PayerType
-    pickupWarehouseId: number
+    customerId: number
+    items: OrderProduct[]
+    priority: PriorityType
     deliveryNote?: string
-    priority?: PriorityType
-    notes?: string
-    isHighValue?: boolean
-    isBreakable?: boolean
-    requiresCooling?: boolean
-    insuranceRequired?: boolean
-    inspectionRequired?: boolean
-    termsAccepted?: boolean
-    pickupNote?: string
+    customerLocationId: number
+    deliveryServiceType: 'STANDARD' | 'EXPRESS' | 'SPECIAL'
 }
 
 type DriverRequestPayload = {
-    fullName: string
+    userId: number
     phone: string
-    email: string
     licenseNumber: string
     vehicleType: string
     vehiclePlateNumber: string
-    vehicleCapacity: number
-    workStartTime: string
-    workEndTime: string
-    preferredAreas: string
-    maxDeliveryRadius: number
-    baseRate: number
-    ratePerKm: number
+}
+
+type CreateDriverByManagerRequestPayload = {
+    username: string
+    email: string
+    fullName: string
+    password: string
+    phone: string
+    licenseNumber: string
+    vehicleType: string
+    vehiclePlateNumber: string
 }
 
 type WarehouseRequestPayload = {
     name: string
-    phone: string
     address: string
+    latitude: number
+    longitude: number
+    totalCapacity: number
+    totalArea: number
+    type: string
+    managerId: number
 }
 
 type VehicleRequestPayload = {
@@ -91,6 +84,50 @@ type ShiftRequestPayload = {
     endTime: string
 }
 
+type ReceiptRequestPayload = {
+    items: { productId: number; quantity: number; note: string }[]
+    storageLocationId: number
+    type: 'INBOUND' | 'OUTBOUND'
+    notes: string
+}
+
+type CreateProductBodyRequest = {
+    name: string
+    unit: string
+    price: number
+    weight: number
+    dimensions: string
+    minStockLevel: number
+    maxStockLevel: number
+    reorderPoint: number
+    storageCondition: StorageCondition
+    imageUrl: string
+    categoryId: number
+    supplierId: number
+}
+
+type StorageLocationRequestPayload = {
+    storageAreaId: number
+    type: string
+    length: number
+    width: number
+    height: number
+    maxWeight: number
+    level: number
+    position: number
+}
+
+type ShipmentRequestPayload = {
+    warehouseId: number
+    shipmentDate: string
+    notes: string
+    details: {
+        productId: number
+        quantity: number
+        note: string
+    }[]
+}
+
 export type {
     VRPRequestPayload,
     OrderRequestPayload,
@@ -100,5 +137,10 @@ export type {
     VehicleRequestPayload,
     TaskAssignmentRequestPayload,
     TaskRequestPayload,
-    ShiftRequestPayload
+    ShiftRequestPayload,
+    ReceiptRequestPayload,
+    StorageLocationRequestPayload,
+    CreateProductBodyRequest,
+    ShipmentRequestPayload,
+    CreateDriverByManagerRequestPayload
 }

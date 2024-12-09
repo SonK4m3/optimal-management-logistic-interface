@@ -1,3 +1,7 @@
+import { User } from '@/types/user'
+import { SHIFT_STATUS } from '@/constant/enum'
+import { Order } from './order'
+
 export interface Department {
     id: number
     code: string
@@ -8,13 +12,19 @@ export interface Department {
 
 export type Staff = {
     id: number
-    code: string
-    username: string
-    fullName: string
-    email: string
-    isActive: boolean
+    user: User
     position: string
-    department: Department
+    department?: Department
+}
+
+export type CustomerAddress = {
+    id: number
+    location: {
+        address: string
+        latitude: number
+        longitude: number
+    }
+    isDefault: boolean
 }
 
 export type Customer = {
@@ -23,6 +33,8 @@ export type Customer = {
     fullName: string
     email: string
     phone: string
+    addresses: CustomerAddress[]
+    orderHistory: Order[]
 }
 
 export type Shift = {
@@ -30,6 +42,8 @@ export type Shift = {
     name: string
     startTime: string
     endTime: string
+    isActive: boolean
+    shiftAssignments: ShiftAssignment[]
 }
 
 export type ShiftDetail = {
@@ -60,12 +74,18 @@ export type TaskAssignment = {
     updatedAt: string
 }
 
+export type ShiftAssignmentStatus = (typeof SHIFT_STATUS)[keyof typeof SHIFT_STATUS]
+
 export type ShiftAssignment = {
     id: number
-    workShift: Shift
-    staff: Staff
+    workShiftId: number
+    workShiftName: string
+    startTime: string
+    endTime: string
+    staffId: number
+    staffName: string
     workDate: string
-    status: string
+    status: ShiftAssignmentStatus
     note: string
     createdAt: string
     updatedAt: string

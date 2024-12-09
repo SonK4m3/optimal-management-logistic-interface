@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Marker, Popup } from 'react-leaflet'
-import { MapContainer, TileLayer, Polyline } from 'react-leaflet'
+import { MapContainer, TileLayer } from 'react-leaflet'
 import L from 'leaflet'
-import { generateVehicleColor } from '@/lib/color'
 import 'leaflet/dist/leaflet.css'
 import { useAdminContext } from '@/contexts/AdminContext'
 
@@ -16,40 +15,8 @@ L.Icon.Default.mergeOptions({
 const AdminMap = () => {
     const orderIconUrl = '/customer-marker.png'
     const warehouseIconUrl = '/depot-marker.png'
-    const driverIconUrl = '/driver-marker.png'
 
-    const { drivers, orders, warehouses } = useAdminContext()
-
-    const renderDeliveryRoutes = () => {
-        if (!drivers.length || !orders.length) return null
-
-        return drivers.map((driver, index) => {
-            if (!driver.currentLatitude || !driver.currentLongitude) return null
-
-            // Create array of positions starting with driver location
-            const positions: [number, number][] = [
-                [driver.currentLatitude, driver.currentLongitude]
-            ]
-
-            // Add assigned order delivery locations for this driver
-            const driverOrders = orders.filter(order => order.id === driver.id)
-            driverOrders.forEach(order => {
-                positions.push([order.receiverLocation.latitude, order.receiverLocation.longitude])
-            })
-
-            return (
-                <Polyline
-                    key={driver.id}
-                    positions={positions}
-                    pathOptions={{
-                        color: generateVehicleColor(index),
-                        weight: 3,
-                        opacity: 0.7
-                    }}
-                />
-            )
-        })
-    }
+    const { orders, warehouses } = useAdminContext()
 
     return (
         <div className='h-[600px] w-full border rounded-lg overflow-hidden'>
@@ -63,38 +30,11 @@ const AdminMap = () => {
                     url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
                 />
 
-                {/* Render delivery routes */}
-                {renderDeliveryRoutes()}
-
-                {/* Render Driver Positions */}
-                {drivers.map(
-                    driver =>
-                        driver.currentLatitude &&
-                        driver.currentLongitude && (
-                            <Marker
-                                key={driver.id}
-                                position={[driver.currentLatitude, driver.currentLongitude]}
-                                icon={
-                                    new L.Icon({
-                                        iconUrl: driverIconUrl,
-                                        iconSize: [25, 41],
-                                        iconAnchor: [12, 41]
-                                    })
-                                }
-                                title='driver'
-                            >
-                                <Popup>
-                                    <div>{driver.fullName}</div>
-                                </Popup>
-                            </Marker>
-                        )
-                )}
-
                 {/* Render Warehouses */}
                 {warehouses.map(warehouse => (
                     <Marker
                         key={warehouse.id}
-                        position={[warehouse.latitude, warehouse.longitude]}
+                        position={[warehouse.location.latitude, warehouse.location.longitude]}
                         icon={
                             new L.Icon({
                                 iconUrl: warehouseIconUrl,
@@ -113,10 +53,10 @@ const AdminMap = () => {
                 {/* Render Order Delivery Locations */}
                 {orders.map(order => (
                     <Marker
-                        key={order.id}
+                        key={order.orderId}
                         position={[
-                            order.receiverLocation.latitude,
-                            order.receiverLocation.longitude
+                            order.delivery?.deliveryLocation.latitude || 0,
+                            order.delivery?.deliveryLocation.longitude || 0
                         ]}
                         icon={
                             new L.Icon({
@@ -128,7 +68,7 @@ const AdminMap = () => {
                         title='order'
                     >
                         <Popup>
-                            <div>{order.id}</div>
+                            <div>{order.orderId}</div>
                         </Popup>
                     </Marker>
                 ))}

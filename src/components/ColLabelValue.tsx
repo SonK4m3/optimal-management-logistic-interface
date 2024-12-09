@@ -1,6 +1,8 @@
+import { ReactNode } from 'react'
+
 interface ColLabelValueProps {
     label: string
-    value: string | number | boolean | null
+    value: string | number | boolean | null | ReactNode
 }
 
 const ColLabelValue = ({ label, value }: ColLabelValueProps) => {

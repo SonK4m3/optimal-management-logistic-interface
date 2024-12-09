@@ -1,6 +1,6 @@
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
-
+import { HANOI_LOCATION } from '@/constant/enum'
 interface AppMapProps {
     center: [number, number]
     zoom: number
@@ -25,8 +25,8 @@ export const MapClickHandler = ({
 }
 
 const AppMap = ({
-    center,
-    zoom,
+    center = [HANOI_LOCATION.LAT, HANOI_LOCATION.LNG],
+    zoom = 13,
     onMarkerClick,
     currentMarker,
     height = '600px',

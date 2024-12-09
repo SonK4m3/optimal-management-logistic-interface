@@ -3,11 +3,13 @@ import { Marker } from 'react-leaflet'
 import { MapContainer, TileLayer, Polyline } from 'react-leaflet'
 import L from 'leaflet'
 import { Driver } from '@/types/driver'
-import { Order } from '@/types/order'
+import { Delivery } from '@/types/order'
 import { Warehouse } from '@/types/warehouse'
 import { generateVehicleColor } from '@/lib/color'
 import 'leaflet/dist/leaflet.css'
 import { MapClickHandler } from '@/components/AppMap'
+import { HANOI_LOCATION } from '@/constant/enum'
+import MapCenterHandler from '@/components/MapCenterHandler'
 
 delete (L.Icon.Default.prototype as any)._getIconUrl
 L.Icon.Default.mergeOptions({
@@ -17,29 +19,40 @@ L.Icon.Default.mergeOptions({
 })
 
 interface DriverMapProps {
+    center: {
+        lat: number
+        lng: number
+    }
     driver: Driver | null
-    orders: Order[]
+    delivery: Delivery | null | undefined
     warehouses: Warehouse[]
     onClickToMap: (marker: { lat: number; lng: number }) => void
     currentMarker: { lat: number; lng: number } | null
 }
 
-const DriverMap = ({ driver, orders, warehouses, onClickToMap, currentMarker }: DriverMapProps) => {
+const DriverMap = ({
+    center = { lat: HANOI_LOCATION.LAT, lng: HANOI_LOCATION.LNG },
+    driver,
+    delivery,
+    warehouses,
+    onClickToMap,
+    currentMarker
+}: DriverMapProps) => {
     const orderIconUrl = '/customer-marker.png'
     const warehouseIconUrl = '/depot-marker.png'
     const driverIconUrl = '/driver-marker.png'
 
     const renderDeliveryRoute = () => {
-        if (!driver || !orders.length || !driver.currentLatitude || !driver.currentLongitude)
-            return null
+        if (!driver || !delivery || !driver.currentLatitude || !driver.currentLongitude) return null
 
         // Create array of positions starting with driver location
         const positions: [number, number][] = [[driver.currentLatitude, driver.currentLongitude]]
 
         // Add order delivery locations
-        orders.forEach(order => {
-            positions.push([order.receiverLocation.latitude, order.receiverLocation.longitude])
-        })
+        positions.push([
+            delivery?.deliveryLocation.latitude || 0,
+            delivery?.deliveryLocation.longitude || 0
+        ])
 
         return (
             <Polyline
@@ -56,10 +69,12 @@ const DriverMap = ({ driver, orders, warehouses, onClickToMap, currentMarker }: 
     return (
         <div className='h-[600px] w-full border rounded-lg overflow-hidden'>
             <MapContainer
-                center={[10.762622, 106.660172]}
+                center={[center.lat, center.lng]}
                 zoom={13}
                 style={{ height: '100%', width: '100%', zIndex: '5' }}
             >
+                <MapCenterHandler center={center} />
+
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
@@ -90,7 +105,7 @@ const DriverMap = ({ driver, orders, warehouses, onClickToMap, currentMarker }: 
                 {warehouses.map(warehouse => (
                     <Marker
                         key={warehouse.id}
-                        position={[warehouse.latitude, warehouse.longitude]}
+                        position={[warehouse.location.latitude, warehouse.location.longitude]}
                         icon={
                             new L.Icon({
                                 iconUrl: warehouseIconUrl,
@@ -102,12 +117,12 @@ const DriverMap = ({ driver, orders, warehouses, onClickToMap, currentMarker }: 
                 ))}
 
                 {/* Render Order Delivery Locations */}
-                {orders.map(order => (
+                {delivery && (
                     <Marker
-                        key={order.id}
+                        key={delivery.id}
                         position={[
-                            order.receiverLocation.latitude,
-                            order.receiverLocation.longitude
+                            delivery.deliveryLocation.latitude || 0,
+                            delivery.deliveryLocation.longitude || 0
                         ]}
                         icon={
                             new L.Icon({
@@ -117,7 +132,7 @@ const DriverMap = ({ driver, orders, warehouses, onClickToMap, currentMarker }: 
                             })
                         }
                     />
-                ))}
+                )}
             </MapContainer>
         </div>
     )

@@ -2,7 +2,7 @@ import React from 'react'
 
 interface FormSelectProps<T extends string> {
     selected: T | undefined
-    options: T[]
+    options: { label: string; value: T }[]
     onSelect: (option: T) => void
 }
 
@@ -23,8 +23,8 @@ const FormSelect = <T extends string>({
                 </option>
             )}
             {options.map((option, index) => (
-                <option key={`${option}-${index}`} value={option}>
-                    {option}
+                <option key={`${option.value}-${index}`} value={option.value}>
+                    {option.label}
                 </option>
             ))}
         </select>

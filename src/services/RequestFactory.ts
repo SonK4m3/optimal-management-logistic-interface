@@ -7,7 +7,11 @@ import VehicleRequest from '@/services/VehicleRequest'
 import ResourceRequest from '@/services/ResourceRequest'
 import TaskRequest from '@/services/TaskRequest'
 import ShiftRequest from '@/services/ShiftRequest'
-
+import ProductRequest from '@/services/ProductRequest'
+import InventoryRequest from '@/services/InventoryRequest'
+import StorageAreaRequest from '@/services/StorageAreaRequest'
+import ShipmentRequest from '@/services/ShipmentRequest'
+import DeliveryRequest from '@/services/DeliveryRequest'
 const RequestMap = {
     AuthRequest,
     VRPRequest,
@@ -17,7 +21,12 @@ const RequestMap = {
     VehicleRequest,
     ResourceRequest,
     TaskRequest,
-    ShiftRequest
+    ShiftRequest,
+    ProductRequest,
+    InventoryRequest,
+    StorageAreaRequest,
+    ShipmentRequest,
+    DeliveryRequest
 } as const
 
 type RequestClasses = typeof RequestMap

@@ -6,7 +6,6 @@ import { Input } from './ui/input'
 import { useForm } from 'react-hook-form'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { toast } from './ui/use-toast'
-
 const LoginModal: React.FC = () => {
     const { closeModal } = useModalContext()
     const { handleLogin, handleRegister } = useAuthContext()
@@ -40,18 +39,13 @@ const LoginModal: React.FC = () => {
             data,
             () => {
                 setFormType('login')
-                // toast({
-                //     variant: 'success',
-                //     title: 'Register success',
-                //     description: 'Please login to continue'
-                // })
             },
-            () => {
-                // toast({
-                //     variant: 'destructive',
-                //     title: 'Register failed',
-                //     description: error
-                // })
+            error => {
+                toast({
+                    variant: 'destructive',
+                    title: 'Register failed',
+                    description: error
+                })
             }
         )
     }

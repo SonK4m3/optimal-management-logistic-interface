@@ -7,6 +7,7 @@ import {
     PICKUP_TIME_TYPE
 } from '@/constant/enum'
 import { Driver } from './driver'
+import { Customer } from './resource'
 
 type OrderStatus = (typeof ORDER_STATUS)[keyof typeof ORDER_STATUS]
 type DeliveryStatus = (typeof DELIVERY_STATUS)[keyof typeof DELIVERY_STATUS]
@@ -15,35 +16,17 @@ type PayerType = (typeof PAYER_TYPE)[keyof typeof PAYER_TYPE]
 type PriorityType = 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT'
 type CargoType = (typeof CARGO_TYPE)[keyof typeof CARGO_TYPE]
 type PickupTimeType = (typeof PICKUP_TIME_TYPE)[keyof typeof PICKUP_TIME_TYPE]
-type ReceiverLocation = {
-    address: string
-    latitude: number
-    longitude: number
-    district: string
-    province: string
-    ward: string
-}
+
 type Order = {
-    id: number
+    orderId: number
     orderCode: string
-    orderDate: string
     status: OrderStatus
     priority: PriorityType
-    cargoType: CargoType
-    payer: PayerType
-    serviceType: ServiceType
-    sender: Sender
-    weight: number
-    receiverName: string
-    receiverPhone: string
-    receiverAddress: string
-    receiverLocation: ReceiverLocation
-    pickupWarehouse: PickupWarehouse
-    pickupTime: string
-    orderProducts: OrderProduct[]
-    deliveryNote: string
+    totalAmount: number
+    totalWeight: number
+    customer: Customer
+    createdAt: string
     lastUpdated: string
-    lastUpdatedBy: string
 }
 interface Sender {
     id: number
@@ -83,13 +66,51 @@ interface OrderProduct {
     unitPrice: number
 }
 
-interface Delivery {
+type Delivery = {
     id: number
-    order: Order
-    status: DeliveryStatus
-    deliveryNotes: string
-    driver: Driver
-    currentLocation: string
+    order: OrderWithFee
+    status: string
+    deliveryNote: string
+    deliveryLocation: {
+        address: string
+        latitude: number
+        longitude: number
+    }
+    estimatedDistance: number
+    estimatedDeliveryTime: string
+    createdAt: string
+    updatedAt: string
+    warehouseList: number[]
+    statusHistory: StatusHistory[]
+    driver?: Driver
+}
+
+type StatusHistory = {
+    status: string
+    timestamp: string
+    note: string
+    location: {
+        address: string
+        latitude: number
+        longitude: number
+    }
+    updatedBy: string
+}
+
+type DeliveryServiceType = 'STANDARD' | 'EXPRESS' | 'SPECIAL'
+
+type DeliveryFee = {
+    baseFee: number
+    weightFee: number
+    surcharge: number
+    totalFee: number
+    serviceType: DeliveryServiceType
+}
+
+type OrderWithFee = Order & {
+    deliveryFee: DeliveryFee
+    subTotal: number
+    delivery: Delivery
 }
 
 export type {
@@ -104,5 +125,9 @@ export type {
     PayerType,
     PriorityType,
     CargoType,
-    PickupTimeType
+    PickupTimeType,
+    DeliveryFee,
+    DeliveryServiceType,
+    OrderWithFee,
+    StatusHistory
 }

@@ -122,7 +122,10 @@ const PlanManagement = () => {
                     Select one driver
                 </label>
                 <FormSelect
-                    options={drivers.map(driver => driver.fullName)}
+                    options={drivers.map(driver => ({
+                        label: driver.fullName,
+                        value: driver.fullName
+                    }))}
                     selected={selectedDriver?.fullName}
                     onSelect={handleSelectDriver}
                 />

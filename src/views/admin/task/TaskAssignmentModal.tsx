@@ -47,15 +47,18 @@ const TaskAssignmentModal = ({ task, staffs }: TaskAssignmentModalProps) => {
                     selected={
                         staffId === -1
                             ? undefined
-                            : staffs.find(staff => staff.id === staffId)?.fullName
+                            : staffs.find(staff => staff.id === staffId)?.user.username
                     }
                     onSelect={value => {
-                        const staff = staffs.find(staff => staff.fullName === value)
+                        const staff = staffs.find(staff => staff.user.username === value)
                         if (staff) {
                             setStaffId(staff.id)
                         }
                     }}
-                    options={staffs.map(staff => staff.fullName)}
+                    options={staffs.map(staff => ({
+                        label: staff.user.username,
+                        value: staff.user.username
+                    }))}
                 />
             </div>
             <div className='flex flex-col gap-2'>

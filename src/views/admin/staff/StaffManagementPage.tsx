@@ -39,7 +39,7 @@ const StaffManagementPage = () => {
         },
         {
             header: 'Username',
-            accessorKey: 'username'
+            accessorKey: 'user.username'
         },
         {
             header: 'Position',

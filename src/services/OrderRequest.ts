@@ -1,11 +1,15 @@
 import BaseRequest from '@/services/BaseRequest.ts'
-import { Delivery, Order, OrderStatus } from '@/types/order'
+import { Delivery, Order, OrderStatus, OrderWithFee } from '@/types/order'
 import { OrderRequestPayload, PaginationParams } from '@/types/request'
 import { AppResponse, DocsResponseWithPagination } from '@/types/response'
 
 export default class OrderRequest extends BaseRequest {
     async createOrder(data: OrderRequestPayload) {
-        return await this.post<AppResponse<Order>>('/orders', data)
+        return await this.post<AppResponse<Order>>('/orders', data, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
     }
 
     async patchOrder(id: number, data: Partial<Order>) {
@@ -69,6 +73,27 @@ export default class OrderRequest extends BaseRequest {
     async rejectDelivery(payload: { deliveryId: number; driverId: number }) {
         return await this.post<AppResponse<Delivery>>(
             `/deliveries/${payload.driverId}/reject-delivery/${payload.deliveryId}`
+        )
+    }
+
+    // fee
+    async createOrderWithFee(data: OrderRequestPayload) {
+        return await this.post<AppResponse<OrderWithFee>>('/orders/fee', data, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+    }
+
+    async getOdersByUserWithFee({ page = 1, limit = 10 }: PaginationParams) {
+        return await this.get<AppResponse<DocsResponseWithPagination<OrderWithFee>>>(
+            `/orders/user/fee?page=${page}&limit=${limit}`
+        )
+    }
+
+    async getAllOrdersWithFee({ page = 1, limit = 10 }: PaginationParams) {
+        return await this.get<AppResponse<DocsResponseWithPagination<OrderWithFee>>>(
+            `/orders/fee?page=${page}&limit=${limit}`
         )
     }
 }

@@ -79,9 +79,11 @@ const AppTable = <T extends Record<string, any>>({
             : (item[header.accessorKey] as string | number)
 
         const transformedValue = header.transform ? header.transform(value) : value
-        return typeof transformedValue === 'object'
-            ? JSON.stringify(transformedValue)
-            : transformedValue
+        return header.action
+            ? header.action(item)
+            : typeof transformedValue === 'object'
+              ? JSON.stringify(transformedValue)
+              : transformedValue
     }
 
     if (!data.length) {

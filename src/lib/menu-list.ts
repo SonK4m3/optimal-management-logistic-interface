@@ -1,4 +1,4 @@
-import { LucideIcon, Bot, User, Truck, Home } from 'lucide-react'
+import { LucideIcon, Bot, User, Truck } from 'lucide-react'
 type Submenu = {
     href: string
     label: string
@@ -24,14 +24,14 @@ export function getMenuList(pathname: string): Group[] {
             groupLabel: 'My Logistic features',
             menus: [
                 {
-                    href: '/orders',
-                    label: 'Orders',
-                    active: pathname.includes('/orders'),
+                    href: '/',
+                    label: 'Customer',
+                    active: false,
                     icon: Bot,
                     submenus: [
                         {
                             href: '/orders',
-                            label: 'List of Orders',
+                            label: 'My Orders',
                             active: pathname === '/orders'
                         },
                         {
@@ -44,7 +44,7 @@ export function getMenuList(pathname: string): Group[] {
                 {
                     href: '/admin',
                     label: 'Admin',
-                    active: pathname.includes('/admin'),
+                    active: false,
                     icon: User,
                     submenus: [
                         {
@@ -54,23 +54,48 @@ export function getMenuList(pathname: string): Group[] {
                         },
                         {
                             href: '/admin/staffs',
-                            label: 'List of Staffs',
+                            label: 'Manage Staffs',
                             active: pathname === '/admin/staffs'
                         },
                         {
                             href: '/admin/customers',
-                            label: 'List of Customers',
+                            label: 'Manage Customers',
                             active: pathname === '/admin/customers'
                         },
                         {
+                            href: '/admin/drivers',
+                            label: 'Manage Drivers',
+                            active: pathname === '/admin/drivers'
+                        },
+                        {
                             href: '/admin/tasks',
-                            label: 'List of Tasks',
+                            label: 'Manage Tasks',
                             active: pathname === '/admin/tasks'
                         },
                         {
                             href: '/admin/shifts',
-                            label: 'List of Shifts',
+                            label: 'Manage Shifts',
                             active: pathname === '/admin/shifts'
+                        },
+                        {
+                            href: '/admin/warehouse',
+                            label: 'Manage Warehouses',
+                            active: pathname === '/admin/warehouse'
+                        },
+                        {
+                            href: '/admin/products',
+                            label: 'Manage Products',
+                            active: pathname === '/admin/products'
+                        },
+                        {
+                            href: '/admin/inventory',
+                            label: 'Manage Inventory',
+                            active: pathname === '/admin/inventory'
+                        },
+                        {
+                            href: '/admin/delivery',
+                            label: 'Manage Deliveries',
+                            active: pathname === '/admin/delivery'
                         }
                     ]
                 },
@@ -78,62 +103,6 @@ export function getMenuList(pathname: string): Group[] {
                     href: '/driver',
                     label: 'Driver',
                     active: pathname === '/driver',
-                    icon: Truck,
-                    submenus: []
-                },
-                {
-                    href: '/dashboard',
-                    label: 'Dashboard',
-                    active: pathname === '/dashboard',
-                    icon: Home,
-                    submenus: []
-                },
-                {
-                    href: '/vehicle',
-                    label: 'Vehicle',
-                    active: pathname === '/vehicle',
-                    icon: Truck,
-                    submenus: []
-                },
-                {
-                    href: '/warehouse',
-                    label: 'Warehouse',
-                    active: pathname === '/warehouse',
-                    icon: Truck,
-                    submenus: []
-                },
-                {
-                    href: '/booking',
-                    label: 'Booking',
-                    active: pathname === '/booking',
-                    icon: Truck,
-                    submenus: []
-                },
-                {
-                    href: '/customer',
-                    label: 'Customer',
-                    active: pathname === '/customer',
-                    icon: Truck,
-                    submenus: []
-                },
-                {
-                    href: '/fuel',
-                    label: 'Fuel',
-                    active: pathname === '/fuel',
-                    icon: Truck,
-                    submenus: []
-                },
-                {
-                    href: '/tracking',
-                    label: 'Tracking',
-                    active: pathname === '/tracking',
-                    icon: Truck,
-                    submenus: []
-                },
-                {
-                    href: '/income-expenses',
-                    label: 'Income & Expenses',
-                    active: pathname === '/income-expenses',
                     icon: Truck,
                     submenus: []
                 }

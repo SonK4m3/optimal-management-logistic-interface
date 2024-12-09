@@ -49,12 +49,15 @@ export default function ShiftAssignmentModal({ shift, staffs }: ShiftAssignmentM
                 <FormSelect<string>
                     selected={undefined}
                     onSelect={value => {
-                        const staff = staffs.find(staff => staff.fullName === value)
+                        const staff = staffs.find(staff => staff.user.username === value)
                         if (staff && !staffIds.includes(staff.id)) {
                             setStaffIds(prev => [...prev, staff.id])
                         }
                     }}
-                    options={staffs.map(staff => staff.fullName)}
+                    options={staffs.map(staff => ({
+                        label: staff.user.username,
+                        value: staff.user.username
+                    }))}
                 />
             </div>
             <div className='flex flex-col gap-2'>
@@ -62,7 +65,7 @@ export default function ShiftAssignmentModal({ shift, staffs }: ShiftAssignmentM
                 <div className='flex flex-col gap-2 max-h-[100px] overflow-y-auto'>
                     {staffIds.map(id => (
                         <div key={id} className='flex items-center gap-2'>
-                            {staffs.find(staff => staff.id === id)?.fullName}{' '}
+                            {staffs.find(staff => staff.id === id)?.user.username}{' '}
                             <Button
                                 variant='destructive'
                                 size='icon'

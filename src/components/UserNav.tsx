@@ -58,6 +58,12 @@ const UserNav: React.FC<UserNavProps> = ({ user }) => {
                             Orders
                         </Link>
                     </DropdownMenuItem>
+                    <DropdownMenuItem className='hover:cursor-pointer' asChild>
+                        <Link to='/register-driver' className='flex items-center'>
+                            <LayoutGrid className='w-4 h-4 mr-3 text-muted-foreground' />
+                            Register driver
+                        </Link>
+                    </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className='hover:cursor-pointer' onClick={() => handleLogout()}>

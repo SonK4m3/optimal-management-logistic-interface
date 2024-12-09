@@ -48,8 +48,8 @@ export default class BaseRequest {
         return this.request<T>('get', url, { params })
     }
 
-    async post<T>(url: string, data?: RequestData): Promise<T> {
-        return this.request<T>('post', url, { data })
+    async post<T>(url: string, data?: RequestData, config?: AxiosRequestConfig): Promise<T> {
+        return this.request<T>('post', url, { data, ...config })
     }
 
     async put<T>(url: string, data?: RequestData): Promise<T> {

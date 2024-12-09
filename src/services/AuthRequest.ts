@@ -7,7 +7,7 @@ export default class AuthRequest extends BaseRequest {
         email: string
         password: string
         fullName: string
-        role: 'ADMIN' | 'CUSTOMER' | 'STAFF'
+        role: 'ADMIN' | 'CUSTOMER' | 'STAFF' | 'DRIVER'
     }): Promise<AppResponse<string>> {
         const url = `/auth/register`
         return this.post<AppResponse<string>>(url, data)

@@ -8,22 +8,34 @@ import { OrderRequestPayload } from '@/types/request'
 import RequestFactory from '@/services/RequestFactory'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/store'
-import { useEffect, useState } from 'react'
-import { useCallback } from 'react'
-import { Warehouse } from '@/types/warehouse'
 import { toast } from '@/components/ui/use-toast'
 import { orderSchema, OrderSchemaType } from '@/schemas/orderSchema'
-import { CargoType, PayerType, ServiceType, PickupTimeType } from '@/types/order'
-import { SERVICE_TYPE, CARGO_TYPE, PAYER_TYPE, PICKUP_TIME_TYPE } from '@/constant/enum'
-import AppMap from '@/components/AppMap'
+import { X } from 'lucide-react'
+import { PriorityType } from '@/types/order'
+import FlexLabelValue from '@/components/FlexLabelValue'
+import { Customer } from '@/types/resource'
+import { useEffect, useMemo, useState } from 'react'
+import { useModalContext } from '@/contexts/ModalContext'
+import CreateAddressModal from './CreateAddressModal'
+import { Product } from '@/types/product'
+import AppSearchDropdown from '@/components/AppSearchDropdown'
+import ColLabelValue from '@/components/ColLabelValue'
+
+const SURCHARGE_FEE = {
+    STANDARD: 0,
+    EXPRESS: 50000,
+    SPECIAL: 100000
+}
 
 const CreateOrderPage: React.FC = () => {
-    const user = useSelector((state: RootState) => state.user.user)
-
+    const { user, accessToken } = useSelector((state: RootState) => state.user)
     const OrderRequest = RequestFactory.getRequest('OrderRequest')
-    const warehouseRequest = RequestFactory.getRequest('WarehouseRequest')
+    const ResourceRequest = RequestFactory.getRequest('ResourceRequest')
+    const ProductRequest = RequestFactory.getRequest('ProductRequest')
+    const { openModal } = useModalContext()
 
-    const [warehouses, setWarehouses] = useState<Warehouse[]>([])
+    const [customer, setCustomer] = useState<Customer | null>(null)
+    const [products, setProducts] = useState<Product[]>([])
 
     const {
         register,
@@ -35,51 +47,64 @@ const CreateOrderPage: React.FC = () => {
     } = useForm<OrderSchemaType>({
         resolver: zodResolver(orderSchema),
         defaultValues: {
-            orderProducts: [
-                {
-                    name: 'Product 1',
-                    price: 10000,
-                    quantity: 1,
-                    weight: 100
-                }
-            ],
-            receiverName: 'Nguyen Van A',
-            receiverPhone: '0909090909',
-            receiverAddress: '123 Nguyen Van A, Ha Noi',
-            receiverLatitude: 10.762622,
-            receiverLongitude: 106.660172,
-            pickupTime: PICKUP_TIME_TYPE.MORNING,
-            serviceType: SERVICE_TYPE.STANDARD,
-            cargoType: CARGO_TYPE.GENERAL,
-            payer: PAYER_TYPE.SENDER,
-            pickupWarehouseId: 1,
-            deliveryNote: 'AAAA'
+            items: [],
+            priority: 'MEDIUM',
+            deliveryNote: '',
+            customerLocationId: 0,
+            deliveryServiceType: 'STANDARD'
         }
     })
 
     const { fields, append, remove } = useFieldArray({
         control,
-        name: 'orderProducts'
+        name: 'items'
     })
+
+    const totalWeight = useMemo(() => {
+        return fields.reduce(
+            (acc, item) =>
+                acc + item.weight * (watch(`items.${fields.indexOf(item)}.quantity`) || 0),
+            0
+        )
+    }, [fields, watch])
+
+    const totalPrice = useMemo(() => {
+        return fields.reduce(
+            (acc, item) =>
+                acc + item.price * (watch(`items.${fields.indexOf(item)}.quantity`) || 0),
+            0
+        )
+    }, [fields, watch])
+
+    const handleAddItem = (productId: number) => {
+        const product = products.find(p => p.id === productId)
+        if (!product) return
+
+        if (fields.some(item => item.productId === productId)) return
+
+        append({
+            productId,
+            quantity: 1,
+            price: product.price,
+            weight: product.weight
+        })
+    }
 
     const onSubmit = async (data: OrderSchemaType) => {
         const payload: OrderRequestPayload = {
-            senderId: user?.id || 0,
-            receiverName: data.receiverName,
-            receiverPhone: data.receiverPhone,
-            receiverAddress: data.receiverAddress,
-            receiverLatitude: data.receiverLatitude,
-            receiverLongitude: data.receiverLongitude,
-            orderProducts: data.orderProducts,
-            pickupTime: data.pickupTime,
-            serviceType: data.serviceType as ServiceType,
-            cargoType: data.cargoType as CargoType,
-            payer: data.payer as PayerType,
-            pickupWarehouseId: data.pickupWarehouseId,
-            deliveryNote: data.deliveryNote
+            customerId: customer?.id || 0,
+            items: data.items.map(item => ({
+                productId: item.productId,
+                quantity: item.quantity
+            })),
+            priority: data.priority as PriorityType,
+            deliveryNote: data.deliveryNote || undefined,
+            customerLocationId: data.customerLocationId,
+            deliveryServiceType: data.deliveryServiceType
         }
+
         try {
-            const response = await OrderRequest.createOrder(payload)
+            const response = await OrderRequest.createOrderWithFee(payload)
             if (response.success) {
                 toast({
                     variant: 'success',
@@ -96,167 +121,178 @@ const CreateOrderPage: React.FC = () => {
         }
     }
 
-    const fetchWarehouses = useCallback(async () => {
-        const response = await warehouseRequest.getWarehouses()
-        setWarehouses(response.data)
-    }, [warehouseRequest])
+    const fetchCustomer = async () => {
+        setCustomer(null)
+        try {
+            const response = await ResourceRequest.getCustomerById(user?.id || 0)
+            if (response.success) {
+                setCustomer(response.data)
+                if (response.data.addresses.length > 0) {
+                    setValue('customerLocationId', response.data.addresses[0].id)
+                }
+            }
+        } catch (error) {
+            console.log(error)
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: `${(error as Error).message}`
+            })
+            setCustomer(null)
+        }
+    }
+
+    const onClickNewAddress = () => {
+        openModal({
+            title: 'Create Address',
+            content: (
+                <CreateAddressModal
+                    customerId={customer?.id || 0}
+                    onSuccess={() => {
+                        fetchCustomer()
+                    }}
+                />
+            )
+        })
+    }
+
+    const fetchProducts = async () => {
+        const response = await ProductRequest.getProducts({
+            query: '',
+            page: 1,
+            size: 100
+        })
+        if (response.success) {
+            setProducts(response.data.docs)
+        }
+    }
 
     useEffect(() => {
-        fetchWarehouses()
-    }, [])
+        if (accessToken) {
+            fetchCustomer()
+            fetchProducts()
+        }
+    }, [accessToken])
 
     return (
         <BaseLayout title='Create Order' titleTab='OML | Create Order'>
-            <form onSubmit={handleSubmit(onSubmit)} className='space-y-6 max-w-2xl mx-auto p-6'>
+            <form
+                onSubmit={handleSubmit(onSubmit)}
+                className='space-y-6 max-w-2xl w-full mx-auto p-6'
+            >
                 <Button type='submit' variant='default'>
                     Create Order
                 </Button>
-                {/* Receiver Information */}
-                <div className='space-y-4'>
-                    <h2 className='text-xl font-semibold'>Receiver Information</h2>
-                    <Input
-                        placeholder='Receiver Name'
-                        {...register('receiverName')}
-                        className={errors.receiverName ? 'border-red-500' : ''}
-                    />
-                    <p className='text-red-500'>{errors.receiverName?.message}</p>
-                    <Input
-                        placeholder='Receiver Phone'
-                        {...register('receiverPhone')}
-                        className={errors.receiverPhone ? 'border-red-500' : ''}
-                    />
-                    <p className='text-red-500'>{errors.receiverPhone?.message}</p>
-                    <Input
-                        placeholder='Receiver Address'
-                        {...register('receiverAddress')}
-                        className={errors.receiverAddress ? 'border-red-500' : ''}
-                    />
-                    <p className='text-red-500'>{errors.receiverAddress?.message}</p>
-                </div>
 
-                <AppMap
-                    center={[10.762622, 106.660172]}
-                    zoom={13}
-                    currentMarker={{
-                        lat: watch('receiverLatitude'),
-                        lng: watch('receiverLongitude')
-                    }}
-                    onMarkerClick={marker => {
-                        setValue('receiverLatitude', marker.lat)
-                        setValue('receiverLongitude', marker.lng)
-                    }}
-                />
+                <div className='space-y-4 flex flex-col gap-4 border p-4 rounded-lg bg-gray-900 border-color-neutral-alpha-300'>
+                    <FlexLabelValue label='Customer' value={customer?.fullName} />
+                    <FlexLabelValue label='Phone' value={customer?.phone} />
+                    <FlexLabelValue label='Email' value={customer?.email} />
+                    <FlexLabelValue
+                        label='Address'
+                        value={
+                            <div className='w-full flex items-center gap-2'>
+                                <FormSelect
+                                    selected={watch('customerLocationId').toString()}
+                                    options={
+                                        customer?.addresses.map(address => ({
+                                            label: address.location.address,
+                                            value: address.id.toString()
+                                        })) || []
+                                    }
+                                    onSelect={value => {
+                                        const address = customer?.addresses.find(
+                                            address => address.id.toString() === value
+                                        )
+                                        setValue('customerLocationId', address?.id || 0)
+                                    }}
+                                />
+                                <Button
+                                    variant='primary'
+                                    type='button'
+                                    size='sm'
+                                    onClick={onClickNewAddress}
+                                >
+                                    New Address
+                                </Button>
+                            </div>
+                        }
+                    />
+                </div>
 
                 {/* Products Section */}
                 <div className='space-y-4'>
-                    <div className='flex items-center justify-between'>
+                    <div className='flex flex-col gap-2'>
                         <h2 className='text-xl font-semibold'>Products</h2>
-                        <Button
-                            type='button'
-                            variant='outline'
-                            onClick={() =>
-                                append({
-                                    name: '',
-                                    price: 0,
-                                    quantity: 1,
-                                    weight: 0
-                                })
-                            }
-                        >
-                            Add Product
-                        </Button>
+                        <AppSearchDropdown
+                            items={products.map(product => ({
+                                label: product.name,
+                                value: product.id
+                            }))}
+                            onSelect={value => handleAddItem(Number(value))}
+                            placeholder='Search product...'
+                        />
                     </div>
+                    <div className='space-y-4 border p-4 rounded-lg bg-gray-900 border-color-neutral-alpha-300'>
+                        {fields.map((field, index) => (
+                            <div key={field.id} className='space-y-4 p-4 border rounded relative'>
+                                <div className='grid grid-cols-4 gap-6'>
+                                    <div className='space-y-2'>
+                                        <ColLabelValue
+                                            label='Product'
+                                            value={
+                                                products.find(p => p.id === field.productId)?.name
+                                            }
+                                        />
+                                    </div>
 
-                    {fields.map((field, index) => (
-                        <div key={field.id} className='space-y-4 p-4 border rounded relative'>
-                            <div className='grid grid-cols-4 gap-6'>
-                                <div className='space-y-2'>
-                                    <label className='text-sm font-medium'>Product Name</label>
-                                    <Input
-                                        placeholder='Enter product name'
-                                        {...register(`orderProducts.${index}.name`)}
-                                        className={
-                                            errors.orderProducts?.[index]?.name
-                                                ? 'border-red-500'
-                                                : ''
-                                        }
-                                    />
-                                    <p className='text-xs text-red-500'>
-                                        {errors.orderProducts?.[index]?.name?.message}
-                                    </p>
+                                    <div className='space-y-2'>
+                                        <ColLabelValue
+                                            label='Price'
+                                            value={field.price.toLocaleString()}
+                                        />
+                                    </div>
+                                    <div className='space-y-2'>
+                                        <ColLabelValue
+                                            label='Weight'
+                                            value={field.weight.toLocaleString()}
+                                        />
+                                    </div>
+
+                                    <div className='space-y-2'>
+                                        <label className='text-sm font-medium'>Quantity</label>
+                                        <Input
+                                            type='number'
+                                            placeholder='Enter quantity'
+                                            {...register(`items.${index}.quantity`, {
+                                                valueAsNumber: true
+                                            })}
+                                            className={
+                                                errors.items?.[index]?.quantity
+                                                    ? 'border-red-500'
+                                                    : ''
+                                            }
+                                        />
+                                        <p className='text-xs text-red-500'>
+                                            {errors.items?.[index]?.quantity?.message}
+                                        </p>
+                                    </div>
                                 </div>
 
-                                <div className='space-y-2'>
-                                    <label className='text-sm font-medium'>Price (VND)</label>
-                                    <Input
-                                        type='number'
-                                        placeholder='Enter price'
-                                        {...register(`orderProducts.${index}.price`, {
-                                            valueAsNumber: true
-                                        })}
-                                        className={
-                                            errors.orderProducts?.[index]?.price
-                                                ? 'border-red-500'
-                                                : ''
-                                        }
-                                    />
-                                    <p className='text-xs text-red-500'>
-                                        {errors.orderProducts?.[index]?.price?.message}
-                                    </p>
-                                </div>
-
-                                <div className='space-y-2'>
-                                    <label className='text-sm font-medium'>Quantity</label>
-                                    <Input
-                                        type='number'
-                                        placeholder='Enter quantity'
-                                        {...register(`orderProducts.${index}.quantity`, {
-                                            valueAsNumber: true
-                                        })}
-                                        className={
-                                            errors.orderProducts?.[index]?.quantity
-                                                ? 'border-red-500'
-                                                : ''
-                                        }
-                                    />
-                                    <p className='text-xs text-red-500'>
-                                        {errors.orderProducts?.[index]?.quantity?.message}
-                                    </p>
-                                </div>
-
-                                <div className='space-y-2'>
-                                    <label className='text-sm font-medium'>Weight (gram)</label>
-                                    <Input
-                                        type='number'
-                                        placeholder='Enter weight'
-                                        {...register(`orderProducts.${index}.weight`, {
-                                            valueAsNumber: true
-                                        })}
-                                        className={
-                                            errors.orderProducts?.[index]?.weight
-                                                ? 'border-red-500'
-                                                : ''
-                                        }
-                                    />
-                                    <p className='text-xs text-red-500'>
-                                        {errors.orderProducts?.[index]?.weight?.message}
-                                    </p>
-                                </div>
+                                {fields.length > 0 && (
+                                    <Button
+                                        type='button'
+                                        variant='destructive'
+                                        size='sm'
+                                        className='absolute -top-3 -right-3 rounded-full'
+                                        onClick={() => remove(index)}
+                                    >
+                                        <X className='w-4 h-4' />
+                                    </Button>
+                                )}
                             </div>
-
-                            {fields.length > 1 && (
-                                <Button
-                                    type='button'
-                                    variant='destructive'
-                                    size='sm'
-                                    className='absolute -top-3 -right-3 rounded-full'
-                                    onClick={() => remove(index)}
-                                >
-                                    ×
-                                </Button>
-                            )}
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
 
                 {/* Summary Section */}
@@ -268,98 +304,28 @@ const CreateOrderPage: React.FC = () => {
 
                     <div className='flex justify-between items-center'>
                         <span className='font-medium'>Total Weight:</span>
-                        <span>
-                            {fields.reduce((acc, _, index) => {
-                                const weight =
-                                    Number(control._formValues.orderProducts[index]?.weight) || 0
-                                const quantity =
-                                    Number(control._formValues.orderProducts[index]?.quantity) || 0
-                                return acc + weight * quantity
-                            }, 0)}{' '}
-                            gram
-                        </span>
+                        <span>{totalWeight.toLocaleString()} gram</span>
                     </div>
 
                     <div className='flex justify-between items-center'>
-                        <span className='font-medium'>Total Amount:</span>
-                        <span>
-                            {fields
-                                .reduce((acc, _, index) => {
-                                    const price =
-                                        Number(control._formValues.orderProducts[index]?.price) || 0
-                                    const quantity =
-                                        Number(
-                                            control._formValues.orderProducts[index]?.quantity
-                                        ) || 0
-                                    return acc + price * quantity
-                                }, 0)
-                                .toLocaleString()}{' '}
-                            VND
-                        </span>
+                        <span className='font-medium'>Total Price:</span>
+                        <span>{totalPrice.toLocaleString()} VND</span>
                     </div>
                 </div>
 
-                {/* Pickup Time */}
                 <div className='space-y-4'>
-                    <h2 className='text-xl font-semibold'>Pickup Time</h2>
+                    <h2 className='text-xl font-semibold'>Priority</h2>
                     <FormSelect
-                        selected={watch('pickupTime')}
-                        options={Object.values(PICKUP_TIME_TYPE)}
-                        onSelect={value => setValue('pickupTime', value as PickupTimeType)}
+                        selected={watch('priority')}
+                        options={['HIGH', 'MEDIUM', 'LOW'].map(priority => ({
+                            label: priority,
+                            value: priority
+                        }))}
+                        onSelect={value => setValue('priority', value as PriorityType)}
                     />
-                    <p className='text-red-500'>{errors.pickupTime?.message}</p>
+                    <p className='text-red-500'>{errors.priority?.message}</p>
                 </div>
 
-                {/* Service Type */}
-                <div className='space-y-4'>
-                    <h2 className='text-xl font-semibold'>Service Type</h2>
-                    <FormSelect
-                        selected={watch('serviceType')}
-                        options={Object.values(SERVICE_TYPE)}
-                        onSelect={value => setValue('serviceType', value as ServiceType)}
-                    />
-                    <p className='text-red-500'>{errors.serviceType?.message}</p>
-                </div>
-
-                {/* Cargo Type */}
-                <div className='space-y-4'>
-                    <h2 className='text-xl font-semibold'>Cargo Type</h2>
-                    <FormSelect
-                        selected={watch('cargoType')}
-                        options={Object.values(CARGO_TYPE)}
-                        onSelect={value => setValue('cargoType', value as CargoType)}
-                    />
-                    <p className='text-red-500'>{errors.cargoType?.message}</p>
-                </div>
-
-                {/* Payer */}
-                <div className='space-y-4'>
-                    <h2 className='text-xl font-semibold'>Payer</h2>
-                    <div className='flex space-x-4'>
-                        <label className='flex items-center space-x-2'>
-                            <input type='radio' value='SENDER' {...register('payer')} />
-                            <span>Sender</span>
-                        </label>
-                        <label className='flex items-center space-x-2'>
-                            <input type='radio' value='RECEIVER' {...register('payer')} />
-                            <span>Receiver</span>
-                        </label>
-                    </div>
-                    <p className='text-red-500'>{errors.payer?.message}</p>
-                </div>
-
-                {/* Pickup Warehouse */}
-                <div className='space-y-4'>
-                    <h2 className='text-xl font-semibold'>Pickup Warehouse</h2>
-                    <FormSelect
-                        selected={String(watch('pickupWarehouseId'))}
-                        options={warehouses.map(w => String(w.id))}
-                        onSelect={value => setValue('pickupWarehouseId', Number(value))}
-                    />
-                    <p className='text-red-500'>{errors.pickupWarehouseId?.message}</p>
-                </div>
-
-                {/* Delivery Note */}
                 <div className='space-y-4'>
                     <h2 className='text-xl font-semibold'>Delivery Note</h2>
                     <textarea
@@ -370,6 +336,39 @@ const CreateOrderPage: React.FC = () => {
                     />
                     <p className='text-red-500'>{errors.deliveryNote?.message}</p>
                 </div>
+
+                <ColLabelValue
+                    label='Delivery Service Type'
+                    value={
+                        <FormSelect
+                            selected={watch('deliveryServiceType')}
+                            options={['STANDARD', 'EXPRESS', 'SPECIAL'].map(type => ({
+                                label: type,
+                                value: type
+                            }))}
+                            onSelect={value =>
+                                setValue(
+                                    'deliveryServiceType',
+                                    value as 'STANDARD' | 'EXPRESS' | 'SPECIAL'
+                                )
+                            }
+                        />
+                    }
+                />
+
+                <FlexLabelValue
+                    label='Fee'
+                    value={SURCHARGE_FEE[watch('deliveryServiceType')].toLocaleString() + ' VND'}
+                />
+
+                <FlexLabelValue
+                    label='Total'
+                    value={
+                        (
+                            totalPrice + SURCHARGE_FEE[watch('deliveryServiceType')]
+                        ).toLocaleString() + ' VND'
+                    }
+                />
 
                 <Button type='submit' variant='default'>
                     Create Order

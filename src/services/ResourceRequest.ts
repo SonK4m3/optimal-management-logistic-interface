@@ -46,4 +46,23 @@ export default class ResourceRequest extends BaseRequest {
     async getAllTasks() {
         return await this.get<AppResponse<Task[]>>('/resources/tasks')
     }
+
+    async getCustomerById(userId: number) {
+        return await this.get<AppResponse<Customer>>(`/resources/customer/${userId}`)
+    }
+
+    async createCustomerAddress(data: {
+        customerId: number
+        payload: {
+            address: string
+            latitude: number
+            longitude: number
+            isDefault: boolean
+        }
+    }) {
+        return await this.post<AppResponse<Customer>>(
+            `/resources/customer/${data.customerId}/addresses`,
+            data.payload
+        )
+    }
 }
